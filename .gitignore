@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 Ahmed_Badr_CV.pdf
+
+# AI Assistant settings
+.qwen/
