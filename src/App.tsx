@@ -2,8 +2,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Briefcase, 
   GraduationCap, 
-  Github, 
-  Linkedin, 
+  Globe, 
+  User, 
   ExternalLink, 
   Rocket, 
   Award, 
@@ -122,8 +122,8 @@ const App: React.FC = () => {
                ))}
             </div>
             <div className="flex gap-4">
-               <Linkedin size={18} className="text-stone-500 hover:text-white cursor-pointer transition-colors" />
-               <Github size={18} className="text-stone-500 hover:text-white cursor-pointer transition-colors" />
+               <User size={18} className="text-stone-500 hover:text-white cursor-pointer transition-colors" />
+               <Globe size={18} className="text-stone-500 hover:text-white cursor-pointer transition-colors" />
             </div>
           </div>
         </GlassCard>
@@ -292,7 +292,7 @@ const App: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                  <AnimatePresence mode='popLayout'>
-                    {projects.filter(p => activeTab === 'All' || p.category === activeTab).map((p, i) => (
+                    {projects.filter(p => activeTab === 'All' || p.category === activeTab).map((p) => (
                        <motion.div
                          layout
                          key={p.title}
@@ -385,7 +385,7 @@ const App: React.FC = () => {
                        <span className="text-sm font-bold opacity-80">Send Inquiry</span>
                     </a>
                     <a href="#" className="p-8 liquid-glass hover:border-amber-600/50 flex flex-col gap-4">
-                       <Linkedin size={24} className="text-blue-500" />
+                       <User size={24} className="text-blue-500" />
                        <span className="text-sm font-bold opacity-80">Message on LinkedIn</span>
                     </a>
                  </div>
