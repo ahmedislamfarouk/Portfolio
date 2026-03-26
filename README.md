@@ -1,40 +1,73 @@
-# 🚀 My Portfolio
+# React + TypeScript + Vite
 
-Welcome to my personal portfolio repository! This project showcases my latest work, skills, and professional journey.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## ✨ Features
-- [ ] Responsive Design
-- [ ] Interactive Projects Showcase
-- [ ] Contact Form (e.g., via Formspree or EmailJS)
-- [ ] Dark/Light Mode support
+Currently, two official plugins are available:
 
-## 📂 Project Structure
-- `assets/`: Images, icons, and other static assets.
-- `css/`: Custom stylesheets.
-- `js/`: Client-side logic and interactive elements.
-- `projects/`: Specific project folders or data.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## 🛠️ How to run locally
+## React Compiler
 
-### 🖥️ Option 1: Live Server (Recommended)
-If you have **VS Code**, use the [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) extension. Right-click `index.html` and select **"Open with Live Server"**.
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-### 🐍 Option 2: Python HTTP Server
-Open your terminal in this folder and run:
-`python3 -m http.server`
-Then go to `http://localhost:8000` in your browser.
+## Expanding the ESLint configuration
 
-### 🌐 Option 3: Direct Open
-Simply double-click `index.html` in your file explorer. (Note: Some browsers might block local media assets due to CORS).
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-## 🚀 Future Deployment
-You can deploy this to **GitHub Pages** instantly:
-1. Go to your repo settings on GitHub.
-2. Select **Pages** from the sidebar.
-3. Choose the `main` branch and the root folder `/`.
-4. Your portfolio will be live at `https://ahmedislamfarouk.github.io/Portfolio/`.
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-## 📬 Connect with me
-[Your LinkedIn Profile Link]
-[Your Twitter Profile Link]
-[Your Personal Website]
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
+
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
