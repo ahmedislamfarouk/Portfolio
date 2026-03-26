@@ -127,6 +127,39 @@ h1, h2, h3 {
     color: var(--text-muted);
 }
 
+/* Athletic Section */
+.achievement-card {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), var(--glass-bg));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.medal-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.medal-list {
+    list-style: none;
+    margin-top: 1.5rem;
+    text-align: left;
+    display: inline-block;
+}
+
+.medal-list li {
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.medal-list li::before {
+    content: '🏆';
+    position: absolute;
+    left: 0;
+}
+
 /* Hero Section */
 #hero {
     display: flex;
