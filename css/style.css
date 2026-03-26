@@ -85,6 +85,48 @@ h1, h2, h3 {
     color: var(--primary-color);
 }
 
+/* Education Section */
+.section-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.education-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    transition: var(--transition);
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+}
+
+.glass-card h3 {
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.role {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.detail {
+    color: var(--text-muted);
+}
+
 /* Hero Section */
 #hero {
     display: flex;
