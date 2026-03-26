@@ -1,6 +1,6 @@
 # AI-Based Renal Rejection Grade Classification
 
-### 🏆 3rd Place | University of Louisville Research Project (R!L Competition)
+## 🏆 3rd Place | University of Louisville Research Project (R!L Competition)
 
 A non-invasive approach to classify renal rejection grades in kidney transplant patients. Developed during my research internship at the University of Louisville bioengineering labs.
 

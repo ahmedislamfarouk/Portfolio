@@ -1,6 +1,6 @@
 # Real-Time Sobriety Detection System | James Madison University
 
-### 🌍 Research Intern Project | Harrisonburg, VA, USA
+## 🌍 Research Intern Project | Harrisonburg, VA, USA
 
 A specialized AI platform built to detect intoxication levels through non-invasive facial recognition and behavioral analysis. Developed as part of my research internship at James Madison University.
 

@@ -1,6 +1,6 @@
 # Autonomous Golf Cart Navigation | James Madison University
 
-### 🌍 Research Intern Project | Harrisonburg, VA, USA
+## 🌍 Research Intern Project | Harrisonburg, VA, USA
 
 Developed a ROS 2–based perception and control system for autonomous golf cart navigation. This project focused on real-time object detection and path planning in a dynamic environment.
 
