@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 
-// Custom SVG Icons
+// Custom SVG Icons for Github/Linkedin
 const GithubIcon = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
@@ -111,45 +111,34 @@ const researchArr = [
 
 // --- UTILITY COMPONENTS ---
 
-const GradientOrb = ({ className, delay = 0 }: { className: string; delay?: number }) => (
-  <motion.div
-    className={`absolute rounded-full blur-[100px] opacity-40 ${className}`}
-    animate={{
-      scale: [1, 1.2, 1],
-      x: [0, 30, -30, 0],
-      y: [0, -40, 20, 0],
-      opacity: [0.3, 0.5, 0.3],
-    }}
-    transition={{ duration: 15, repeat: Infinity, delay, ease: "easeInOut" }}
-  />
+const MorphingBlobs = () => (
+  <div className="fixed inset-0 overflow-hidden pointer-events-none z-[-10]">
+    <div className="blob w-[900px] h-[900px] bg-accent-blue/15 top-[-300px] left-[-200px]" style={{ animationDelay: '0s' }} />
+    <div className="blob w-[800px] h-[800px] bg-accent-emerald/10 bottom-[-200px] right-[-300px]" style={{ animationDelay: '-5s' }} />
+    <div className="blob w-[700px] h-[700px] bg-accent-cyan/10 top-[20%] left-[40%]" style={{ animationDelay: '-10s' }} />
+  </div>
 );
 
 const SectionDivider = () => (
-  <div className="flex items-center justify-center gap-4 py-12">
-    <div className="h-px w-16 bg-gradient-to-r from-transparent to-amber-600/50" />
-    <div className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />
-    <div className="h-px w-16 bg-gradient-to-l from-transparent to-amber-600/50" />
+  <div className="flex items-center justify-center gap-4 py-20">
+    <div className="h-px w-32 bg-gradient-to-r from-transparent via-accent-blue/40 to-transparent" />
+    <div className="w-2 h-2 rounded-full bg-accent-cyan shadow-[0_0_15px_rgba(6,182,212,0.8)] animate-pulse" />
+    <div className="h-px w-32 bg-gradient-to-l from-transparent via-accent-blue/40 to-transparent" />
   </div>
 );
 
 const StatCard = ({ value, label, delay }: { value: string; label: string; delay: number }) => (
   <motion.div
-    initial={{ opacity: 0, scale: 0.8 }}
-    whileInView={{ opacity: 1, scale: 1 }}
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
-    transition={{ delay, type: "spring", stiffness: 200 }}
-    className="text-center p-6 rounded-2xl bg-gradient-to-br from-white/5 to-white/0 border border-white/10 backdrop-blur-sm"
+    transition={{ delay, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+    className="glass-panel p-10 rounded-4xl text-center group hover:border-accent-blue/50"
   >
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: delay + 0.2 }}
-      className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 bg-clip-text text-transparent"
-    >
+    <div className="text-5xl md:text-7xl font-black text-intel-gradient mb-3 tracking-tighter-extra">
       {value}
-    </motion.div>
-    <div className="text-xs uppercase tracking-widest text-stone-500 mt-2 font-semibold">{label}</div>
+    </div>
+    <div className="text-[10px] uppercase tracking-[0.3em] text-stone-400 font-black">{label}</div>
   </motion.div>
 );
 
@@ -157,10 +146,9 @@ const StatCard = ({ value, label, delay }: { value: string; label: string; delay
 
 const NavBar = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 100);
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -168,454 +156,212 @@ const NavBar = () => {
   const navItems = ['About', 'Research', 'Projects', 'Achievements', 'Contact'];
 
   return (
-    <>
-      <motion.nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'py-4' : 'py-6'}`}
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <div className="max-w-7xl mx-auto px-6">
-          <div className={`rounded-full transition-all duration-500 ${scrolled ? 'bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl shadow-amber-900/20' : 'bg-transparent'}`}>
-            <div className="flex items-center justify-between px-8 py-4">
-              <motion.div
-                className="flex items-center gap-3"
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">AB</span>
-                </div>
-                <div className="hidden sm:block">
-                  <div className="text-white font-bold text-lg tracking-tight">Ahmed Badr</div>
-                  <div className="text-stone-500 text-xs uppercase tracking-widest">AI Researcher</div>
-                </div>
-              </motion.div>
-
-              <div className="hidden lg:flex items-center gap-1">
-                {navItems.map((item, i) => (
-                  <motion.a
-                    key={item}
-                    href={`#${item.toLowerCase()}`}
-                    className="px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-stone-400 hover:text-white transition-all duration-300 relative group rounded-full"
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 * i }}
-                    whileHover={{ y: -2 }}
-                  >
-                    {item}
-                    <span className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-600/20 to-orange-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </motion.a>
-                ))}
-              </div>
-
-              <div className="flex items-center gap-3">
-                <motion.a
-                  href="https://github.com/ahmedislamfarouk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-stone-400 hover:text-white hover:bg-amber-600 hover:border-amber-600 transition-all duration-300"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <GithubIcon size={18} />
-                </motion.a>
-                <motion.a
-                  href="https://linkedin.com/in/ahmedbadr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-stone-400 hover:text-white hover:bg-blue-600 hover:border-blue-600 transition-all duration-300"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <LinkedinIcon size={18} />
-                </motion.a>
-              </div>
+    <motion.nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${scrolled ? 'py-4' : 'py-10'}`}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ type: "spring", damping: 20, stiffness: 100 }}
+    >
+      <div className="max-w-7xl mx-auto px-6">
+        <div className={`glass-panel rounded-full px-10 py-5 flex items-center justify-between ${scrolled ? 'bg-obsidian-900/90' : 'bg-transparent border-transparent'}`}>
+          <div className="flex items-center gap-4">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center shadow-xl shadow-accent-blue/30">
+              <span className="text-white font-black text-sm">AB</span>
+            </div>
+            <div>
+              <div className="text-white font-black tracking-tighter text-lg leading-none mb-1">Ahmed Badr</div>
+              <div className="text-accent-emerald text-[10px] uppercase font-black tracking-[0.2em] leading-none">Quantum AI Research</div>
             </div>
           </div>
-        </div>
-      </motion.nav>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed top-24 left-0 right-0 z-40 lg:hidden px-6"
-          >
-            <div className="bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl p-6 space-y-4">
-              {navItems.map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className="block py-3 text-stone-400 hover:text-white transition-colors"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {item}
-                </a>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+          <div className="hidden lg:flex items-center gap-4">
+            {navItems.map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-stone-400 hover:text-white transition-all relative group"
+              >
+                {item}
+                <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-accent-blue scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-[0.16, 1, 0.3, 1]" />
+              </a>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <motion.a
+              href="https://github.com/ahmedislamfarouk"
+              className="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-stone-400 hover:text-accent-cyan hover:border-accent-cyan transition-all"
+              whileHover={{ y: -2, scale: 1.1 }}
+            >
+              <GithubIcon size={18} />
+            </motion.a>
+            <motion.a
+              href="https://linkedin.com/in/ahmedbadr"
+              className="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-stone-400 hover:text-accent-blue hover:border-accent-blue transition-all"
+              whileHover={{ y: -2, scale: 1.1 }}
+            >
+              <LinkedinIcon size={18} />
+            </motion.a>
+          </div>
+        </div>
+      </div>
+    </motion.nav>
   );
 };
 
 const HeroSection = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
-
-  const glowX = useTransform(mouseX, [0, window.innerWidth], [-100, window.innerWidth + 100]);
-  const glowY = useTransform(mouseY, [0, window.innerHeight], [-100, window.innerHeight + 100]);
-
   return (
-    <section ref={containerRef} id="about" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Animated Background */}
-      <div className="absolute inset-0">
-        <GradientOrb className="w-[600px] h-[600px] bg-amber-600/30 top-[-10%] left-[-10%]" delay={0} />
-        <GradientOrb className="w-[500px] h-[500px] bg-orange-600/20 bottom-[-10%] right-[-10%]" delay={2} />
-        <GradientOrb className="w-[400px] h-[400px] bg-purple-600/20 top-[40%] left-[60%]" delay={4} />
-      </div>
-
-      {/* Mouse-follow glow */}
-      <motion.div
-        className="absolute w-[600px] h-[600px] bg-gradient-to-r from-amber-600/10 to-orange-600/10 rounded-full blur-[120px] pointer-events-none"
-        style={{ x: glowX, y: glowY, translateX: '-50%', translateY: '-50%' }}
-      />
-
-      <motion.div
-        style={{ y, opacity, scale }}
-        className="relative z-10 max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center"
-      >
-        <div className="space-y-10">
-          {/* Badge */}
+    <section id="about" className="relative min-h-screen flex items-center justify-center pt-20">
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center">
+        <div className="space-y-12">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-600/20 to-orange-600/20 border border-amber-600/30 backdrop-blur-sm"
+            className="status-badge"
           >
-            <Sparkles size={14} className="text-amber-500" />
-            <span className="text-xs font-bold uppercase tracking-widest text-amber-400">Available for Research Collaboration</span>
+            <Sparkles size={14} className="text-accent-cyan" />
+            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-accent-blue">SOTA Research Pipeline Active</span>
           </motion.div>
 
-          {/* Main Heading */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-          >
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.9]">
-              <span className="text-white">Crafting</span>
+          <div className="space-y-8">
+            <motion.h1
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="text-8xl md:text-[10rem] font-black tracking-tighter-extra leading-[0.8]"
+            >
+              <span className="text-white">Quantum</span>
               <br />
-              <span className="relative">
-                <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 bg-clip-text text-transparent">Intelligence</span>
-                <motion.span
-                  className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-amber-600 to-orange-600 rounded-full"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ delay: 1, duration: 0.8 }}
-                />
-              </span>
-            </h1>
-          </motion.div>
+              <span className="text-intel-gradient">Intelligence</span>
+            </motion.h1>
 
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-lg md:text-xl text-stone-400 leading-relaxed max-w-xl"
-          >
-            AI Researcher specializing in <span className="text-white font-semibold">Computer Vision</span>,{' '}
-            <span className="text-white font-semibold">Sensor Fusion</span>, and{' '}
-            <span className="text-white font-semibold">Autonomous Robotics</span>.
-            Building the future of intelligent systems.
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 1 }}
+              className="text-2xl text-stone-400 leading-relaxed max-w-xl font-medium"
+            >
+              Ahmed Badr — Senior Research Engineer focused on <span className="text-white">Computer Vision</span> and{' '}
+              <span className="text-accent-emerald">Autonomous Perception</span> systems for high-stakes environments.
+            </motion.p>
+          </div>
 
-          {/* CTA Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="flex flex-wrap items-center gap-4"
+            transition={{ delay: 0.6 }}
+            className="flex flex-wrap gap-6"
           >
-            <motion.a
-              href="#projects"
-              className="group px-8 py-4 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold rounded-full flex items-center gap-3 shadow-lg shadow-amber-900/50 hover:shadow-amber-900/70 transition-all duration-300"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Explore Projects
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </motion.a>
-            <motion.a
-              href="#research"
-              className="px-8 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-full flex items-center gap-3 hover:bg-white/10 transition-all duration-300 backdrop-blur-sm"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-            >
+            <a href="#projects" className="btn-quantum px-10">
+              View Architecture
+              <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+            <a href="#research" className="btn-outline-quantum px-10">
               <Play size={18} className="fill-white" />
-              Research
-            </motion.a>
-          </motion.div>
-
-          {/* Tech Stack Pills */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="flex flex-wrap gap-3"
-          >
-            {['PyTorch', 'TensorFlow', 'ROS 2', 'YOLO', 'Transformers', 'OpenCV'].map((tech, i) => (
-              <motion.span
-                key={tech}
-                className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-stone-400 backdrop-blur-sm"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 + i * 0.1 }}
-                whileHover={{ scale: 1.05, backgroundColor: 'rgba(245, 158, 11, 0.2)', borderColor: 'rgba(245, 158, 11, 0.5)', color: '#fbbf24' }}
-              >
-                {tech}
-              </motion.span>
-            ))}
+              Whitepapers
+            </a>
           </motion.div>
         </div>
 
-        {/* Hero Image/Visual */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4, duration: 1 }}
+          transition={{ delay: 0.4, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
           className="relative hidden lg:block"
         >
-          <div className="relative">
-            {/* Main Image */}
-            <div className="aspect-square rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl shadow-amber-900/30">
+          <div className="glass-panel p-5 rounded-5xl border-white/5 bg-white/5 transform perspective-2000 hover:rotate-y-12 transition-all duration-1000">
+            <div className="aspect-[4/5] rounded-4xl overflow-hidden grayscale brightness-75 hover:grayscale-0 hover:brightness-100 transition-all duration-1000">
               <img
                 src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800"
-                alt="AI Research"
-                className="w-full h-full object-cover"
+                alt="Ahmed Badr AI Research"
+                className="w-full h-full object-cover scale-125 hover:scale-100 transition-transform duration-1000"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             </div>
-
-            {/* Floating Cards */}
-            <motion.div
-              className="absolute -bottom-8 -left-8 px-6 py-4 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/10 shadow-xl"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 1.2 }}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                  <Target size={24} className="text-white" />
+            
+            <div className="absolute -bottom-10 -left-10 glass-panel p-8 rounded-3xl space-y-3 max-w-[280px]">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-accent-blue/20 flex items-center justify-center border border-accent-blue/40">
+                  <Cpu size={24} className="text-accent-blue" />
                 </div>
                 <div>
-                  <div className="text-xs uppercase tracking-widest text-stone-500">Currently Building</div>
-                  <div className="text-white font-bold">SkyVision AI</div>
+                  <div className="text-[10px] uppercase tracking-[0.2em] font-black text-stone-500">Core Focus</div>
+                  <div className="text-white font-black text-sm">Sensor Fusion v4.2</div>
                 </div>
               </div>
-            </motion.div>
-
-            <motion.div
-              className="absolute -top-4 -right-4 px-6 py-4 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/10 shadow-xl"
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 1.4 }}
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex -space-x-2">
-                  {[Brain, Cpu, Zap].map((Icon, i) => (
-                    <div key={i} className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center border-2 border-black">
-                      <Icon size={16} className="text-white" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+            </div>
           </div>
         </motion.div>
-      </motion.div>
-
-      {/* Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-      >
-        <div className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-2">
-          <motion.div
-            className="w-1.5 h-3 bg-gradient-to-b from-amber-500 to-orange-600 rounded-full"
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          />
-        </div>
-        <span className="text-xs uppercase tracking-widest text-stone-500">Scroll</span>
-      </motion.div>
+      </div>
     </section>
   );
 };
 
-const StatsSection = () => (
-  <section className="py-24 relative">
-    <div className="max-w-7xl mx-auto px-6">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <StatCard value="43+" label="Medals Won" delay={0} />
-        <StatCard value="4+" label="Research Areas" delay={0.1} />
-        <StatCard value="10+" label="Projects" delay={0.2} />
-        <StatCard value="3+" label="Years Experience" delay={0.3} />
-      </div>
-    </div>
-  </section>
-);
-
 const AchievementsSection = () => (
-  <section id="achievements" className="py-32 relative">
+  <section id="achievements" className="py-40 relative">
     <div className="max-w-7xl mx-auto px-6">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-center mb-20"
-      >
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-600/10 border border-amber-600/20 mb-6">
-          <Trophy size={16} className="text-amber-500" />
-          <span className="text-xs font-bold uppercase tracking-widest text-amber-400">Excellence & Recognition</span>
+      <div className="mb-24">
+        <div className="status-badge mb-8 border-accent-emerald/20 bg-accent-emerald/5">
+          <Trophy size={16} className="text-accent-emerald" />
+          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-accent-emerald">Distinction & Excellence</span>
         </div>
-        <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white mb-6">
-          Milestones & <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">Distinction</span>
+        <h2 className="text-7xl md:text-9xl font-black tracking-tighter-extra text-white">
+          Competitive <br />
+          <span className="text-intel-gradient">Dominance</span>
         </h2>
-        <p className="text-stone-400 text-lg max-w-2xl mx-auto">
-          A journey of excellence spanning both academic research and professional athletics
-        </p>
-      </motion.div>
+      </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Main Achievement Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="lg:col-span-2"
-        >
-          <div className="relative h-full p-10 rounded-[2.5rem] bg-gradient-to-br from-amber-600/20 via-amber-600/10 to-transparent border border-amber-600/20 overflow-hidden group">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-amber-600/30 to-transparent blur-[80px]" />
-            
-            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8">
-              <div className="flex-1 space-y-6">
-                <div className="flex items-center gap-2">
-                  {[1, 2, 3].map((i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ scale: 0, rotate: -180 }}
-                      whileInView={{ scale: 1, rotate: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.1, type: "spring" }}
-                    >
-                      <Star size={20} className="fill-amber-500 text-amber-500" />
-                    </motion.div>
-                  ))}
-                </div>
-                
-                <h3 className="text-3xl md:text-4xl font-bold text-white leading-tight">
-                  Taekwondo Professional Athlete & Egyptian National Team Member
-                </h3>
-                
-                <p className="text-stone-400 text-lg leading-relaxed">
-                  Representing Egypt on the international stage with 43 medals earned across diverse championships, including 17 Gold medals and the prestigious Medal of Excellence from the President.
-                </p>
+      <div className="grid lg:grid-cols-3 gap-10">
+        <div className="lg:col-span-2 glass-panel p-12 md:p-20 rounded-5xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent-blue/10 blur-[150px] pointer-events-none" />
+          
+          <div className="relative z-10 space-y-12">
+            <div className="flex gap-3">
+              {[1, 2, 3, 4, 5].map(i => (
+                <Star key={i} size={28} className="fill-accent-cyan text-accent-cyan drop-shadow-[0_0_12px_rgba(6,182,212,0.6)]" />
+              ))}
+            </div>
 
-                <div className="flex flex-wrap gap-3">
-                  <div className="px-5 py-3 rounded-xl bg-black/40 backdrop-blur-sm border border-white/10 flex items-center gap-3">
-                    <Medal size={20} className="text-amber-500" />
-                    <span className="text-sm font-bold text-white">1st Place - African Games</span>
-                  </div>
-                  <div className="px-5 py-3 rounded-xl bg-black/40 backdrop-blur-sm border border-white/10 flex items-center gap-3">
-                    <Award size={20} className="text-amber-500" />
-                    <span className="text-sm font-bold text-white">Presidential Award</span>
-                  </div>
+            <div className="space-y-8">
+              <h3 className="text-5xl md:text-6xl font-black text-white leading-[0.9] tracking-tighter">
+                National Champion <br />
+                <span className="text-accent-emerald">Elite Athlete</span>
+              </h3>
+              <p className="text-stone-400 text-2xl leading-relaxed max-w-3xl font-medium">
+                Professional Taekwondo athlete representing Egypt with <span className="text-white font-black">43 Major Championship Medals</span>. 
+                Awarded the <span className="text-accent-blue font-black underline decoration-accent-blue/30 underline-offset-[12px]">Presidential Medal of Excellence</span> for athletic achievement.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-6">
+              <div className="glass-panel px-8 py-5 rounded-2xl flex items-center gap-6 border-accent-emerald/30 bg-accent-emerald/5">
+                <Medal size={40} className="text-accent-emerald" />
+                <div>
+                  <div className="text-white font-black text-xl">Gold Medalist</div>
+                  <div className="text-[10px] uppercase text-stone-500 tracking-[0.2em] font-black">African Games Championship</div>
                 </div>
               </div>
-
-              <motion.div
-                className="text-9xl opacity-20"
-                animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
-                transition={{ duration: 5, repeat: Infinity }}
-              >
-                🥇
-              </motion.div>
+              <div className="glass-panel px-8 py-5 rounded-2xl flex items-center gap-6 border-accent-blue/30 bg-accent-blue/5">
+                <Award size={40} className="text-accent-blue" />
+                <div>
+                  <div className="text-white font-black text-xl">Presidential Order</div>
+                  <div className="text-[10px] uppercase text-stone-500 tracking-[0.2em] font-black">National Medal of Honor</div>
+                </div>
+              </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Side Cards */}
-        <div className="space-y-6">
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-sm group hover:border-amber-600/30 transition-all duration-300"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-600/20 to-amber-600/5 border border-amber-600/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <GraduationCap size={28} className="text-amber-500" />
-              </div>
-              <div>
-                <h4 className="text-xl font-bold text-white mb-1">Alamein University</h4>
-                <p className="text-stone-500 text-sm">Major in Artificial Intelligence</p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-sm group hover:border-purple-600/30 transition-all duration-300"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600/20 to-purple-600/5 border border-purple-600/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Briefcase size={28} className="text-purple-500" />
-              </div>
-              <div>
-                <h4 className="text-xl font-bold text-white mb-1">Nomeda Founder</h4>
-                <p className="text-stone-500 text-sm">AI Venture Incubation</p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="p-8 rounded-[2rem] bg-gradient-to-br from-amber-600/10 to-orange-600/10 border border-amber-600/20 backdrop-blur-sm"
-          >
-            <div className="text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">25+</div>
-              <div className="text-xs uppercase tracking-widest text-stone-500 mt-2">Courses Completed</div>
-            </div>
-          </motion.div>
+        <div className="space-y-8">
+          <div className="glass-panel p-10 rounded-4xl group glass-panel-hover border-accent-blue/10">
+            <GraduationCap size={48} className="text-accent-blue mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all" />
+            <h4 className="text-3xl font-black text-white mb-2 tracking-tight">AI Engineering</h4>
+            <p className="text-stone-500 font-black uppercase text-[10px] tracking-[0.3em]">Alamein International University</p>
+          </div>
+          <div className="glass-panel p-10 rounded-4xl group glass-panel-hover border-accent-emerald/10">
+            <Layers size={48} className="text-accent-emerald mb-8 group-hover:scale-110 group-hover:-rotate-6 transition-all" />
+            <h4 className="text-3xl font-black text-white mb-2 tracking-tight">Venture Lab</h4>
+            <p className="text-stone-500 font-black uppercase text-[10px] tracking-[0.3em]">Founder @ Nomeda AI</p>
+          </div>
         </div>
       </div>
     </div>
@@ -629,162 +375,133 @@ const ProjectsSection = () => {
   const filteredProjects = activeTab === 'All' ? projects : projects.filter(p => p.category === activeTab);
 
   return (
-    <section id="projects" className="py-32 relative">
+    <section id="projects" className="py-40 relative">
       <div className="max-w-7xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-col md:flex-row justify-between items-end gap-8 mb-20"
-        >
+        <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-24">
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-600/10 border border-amber-600/20 mb-6">
-              <Rocket size={16} className="text-amber-500" />
-              <span className="text-xs font-bold uppercase tracking-widest text-amber-400">Technical Portfolio</span>
+            <div className="status-badge mb-8">
+              <Rocket size={16} className="text-accent-blue" />
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-accent-blue">Engineering Portfolio</span>
             </div>
-            <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white">
-              Featured <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">Projects</span>
+            <h2 className="text-7xl md:text-9xl font-black tracking-tighter-extra text-white leading-none">
+              Technical <span className="text-intel-gradient">Systems</span>
             </h2>
           </div>
 
-          <div className="flex flex-wrap gap-2 p-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+          <div className="glass-panel p-2 rounded-full flex flex-wrap gap-1 border-white/5 bg-white/5">
             {categories.map((tab) => (
-              <motion.button
+              <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                className={`px-8 py-4 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-500 ${
                   activeTab === tab
-                    ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-900/50'
-                    : 'text-stone-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-accent-blue text-white shadow-2xl shadow-accent-blue/40'
+                    : 'text-stone-500 hover:text-stone-200'
                 }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
                 {tab}
-              </motion.button>
+              </button>
             ))}
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div layout className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-12">
           <AnimatePresence mode="popLayout">
             {filteredProjects.map((project) => (
               <motion.div
                 key={project.title}
                 layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.4 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="group cursor-pointer"
               >
-                <motion.a
-                  href={project.path}
-                  className="group block rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-sm hover:border-amber-600/30 transition-all duration-500"
-                  whileHover={{ y: -8 }}
-                >
-                  {/* Image */}
+                <div className="glass-panel rounded-5xl overflow-hidden glass-panel-hover border-white/5 bg-obsidian-900/40">
                   <div className="relative aspect-video overflow-hidden">
                     <img
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/40 to-transparent" />
                     
-                    {/* Category Badge */}
-                    <div className="absolute top-4 right-4 px-4 py-2 rounded-full bg-black/60 backdrop-blur-sm border border-white/10">
-                      <span className="text-xs font-bold uppercase tracking-wider text-white">{project.category}</span>
+                    <div className="absolute top-8 right-8 glass-panel px-5 py-2.5 rounded-full border-white/20">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">{project.category}</span>
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="p-8 space-y-6">
+                  <div className="p-12 space-y-10">
                     <div>
-                      <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">
+                      <h3 className="text-4xl font-black text-white mb-5 group-hover:text-accent-cyan transition-colors tracking-tight">
                         {project.title}
                       </h3>
-                      <p className="text-stone-400 leading-relaxed">{project.desc}</p>
+                      <p className="text-stone-400 font-medium text-lg leading-relaxed">
+                        {project.desc}
+                      </p>
                     </div>
 
-                    {/* Stats */}
-                    {project.stats && (
-                      <div className="flex gap-6">
-                        {project.stats.map((stat) => (
-                          <div key={stat.label}>
-                            <div className="text-xl font-bold text-amber-400">{stat.value}</div>
-                            <div className="text-xs uppercase tracking-wider text-stone-500">{stat.label}</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    <div className="flex gap-10 border-t border-white/5 pt-10">
+                      {project.stats?.map((stat) => (
+                        <div key={stat.label}>
+                          <div className="text-accent-emerald text-2xl font-black tracking-tight">{stat.value}</div>
+                          <div className="text-[10px] uppercase font-black tracking-[0.2em] text-stone-500">{stat.label}</div>
+                        </div>
+                      ))}
+                    </div>
 
-                    {/* Tech Stack */}
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-3">
                       {project.tech.map((tech) => (
-                        <span key={tech} className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-stone-400">
+                        <span key={tech} className="px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.2em] text-stone-400 group-hover:border-accent-blue/30 group-hover:text-accent-blue transition-all">
                           {tech}
                         </span>
                       ))}
                     </div>
-
-                    {/* Link */}
-                    <div className="flex items-center gap-2 text-amber-400 font-bold text-sm uppercase tracking-wider group/link">
-                      View Project
-                      <ExternalLink size={16} className="group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform" />
-                    </div>
                   </div>
-                </motion.a>
+                </div>
               </motion.div>
             ))}
           </AnimatePresence>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 };
 
 const ResearchSection = () => (
-  <section id="research" className="py-32 relative">
+  <section id="research" className="py-40 relative">
     <div className="max-w-7xl mx-auto px-6">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="mb-20"
-      >
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-600/10 border border-purple-600/20 mb-6">
-          <Microscope size={16} className="text-purple-500" />
-          <span className="text-xs font-bold uppercase tracking-widest text-purple-400">Research Frontiers</span>
+      <div className="mb-24">
+        <div className="status-badge mb-8 border-accent-emerald/20 bg-accent-emerald/5">
+          <Microscope size={16} className="text-accent-emerald" />
+          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-accent-emerald">Quantum Research Lab</span>
         </div>
-        <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white mb-6">
-          Publications & <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Papers</span>
+        <h2 className="text-7xl md:text-9xl font-black tracking-tighter-extra text-white leading-none">
+          Active <br />
+          <span className="bg-gradient-to-br from-accent-emerald via-accent-cyan to-accent-blue bg-clip-text text-transparent">Whitepapers</span>
         </h2>
-        <p className="text-stone-400 text-lg max-w-2xl">
-          Active research in cutting-edge AI domains
-        </p>
-      </motion.div>
+      </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-3 gap-10">
         {researchArr.map((research, index) => (
           <motion.div
             key={research.title}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: index * 0.1 }}
-            className="group p-8 rounded-[2rem] bg-gradient-to-br from-white/5 to-white/0 border border-white/10 backdrop-blur-sm hover:border-purple-600/30 transition-all duration-500"
-            whileHover={{ y: -8 }}
+            transition={{ delay: index * 0.1, duration: 0.8 }}
+            className="glass-panel p-12 rounded-4xl group glass-panel-hover border-white/5 bg-obsidian-900/40"
           >
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600/20 to-purple-600/5 border border-purple-600/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-              <research.icon size={28} className="text-purple-500" />
+            <div className="w-20 h-20 rounded-2xl bg-accent-emerald/10 border border-accent-emerald/20 flex items-center justify-center mb-10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+              <research.icon size={40} className="text-accent-emerald" />
             </div>
 
-            <div className="inline-block px-4 py-1.5 rounded-full bg-purple-600/10 border border-purple-600/20 text-xs font-bold uppercase tracking-wider text-purple-400 mb-4">
+            <div className="inline-block px-5 py-2 rounded-full bg-accent-emerald/10 border border-accent-emerald/20 text-[10px] font-black uppercase tracking-[0.2em] text-accent-emerald mb-8">
               {research.status}
             </div>
 
-            <h3 className="text-xl font-bold text-white mb-3">{research.title}</h3>
-            <p className="text-stone-400 leading-relaxed">{research.desc}</p>
+            <h3 className="text-3xl font-black text-white mb-5 tracking-tight">{research.title}</h3>
+            <p className="text-stone-400 font-medium text-lg leading-relaxed">{research.desc}</p>
           </motion.div>
         ))}
       </div>
@@ -793,82 +510,59 @@ const ResearchSection = () => (
 );
 
 const ContactSection = () => (
-  <section id="contact" className="py-32 relative">
+  <section id="contact" className="py-40 relative">
     <div className="max-w-7xl mx-auto px-6">
-      <div className="relative rounded-[3rem] overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-600/20 via-orange-600/10 to-purple-600/20" />
-        <div className="absolute inset-0 backdrop-blur-3xl" />
+      <div className="glass-panel p-16 md:p-32 rounded-5xl overflow-hidden relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/15 via-transparent to-accent-emerald/15 pointer-events-none" />
         
-        <div className="relative z-10 grid lg:grid-cols-2 gap-16 p-12 md:p-20">
-          <div className="space-y-8">
-            <div>
-              <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-white mb-6">
-                Let's Build the <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">Future</span>
+        <div className="relative z-10 grid lg:grid-cols-2 gap-24 items-center">
+          <div className="space-y-16">
+            <div className="space-y-8">
+              <h2 className="text-7xl font-black tracking-tighter-extra text-white leading-[0.85]">
+                Initiate <br />
+                <span className="text-intel-gradient">Sync</span>
               </h2>
-              <p className="text-stone-400 text-lg leading-relaxed">
-                Open to research collaborations, speaking opportunities, and innovative AI projects.
+              <p className="text-2xl text-stone-400 font-medium leading-relaxed max-w-md">
+                Deploying intelligent solutions for next-generation industries. Available for select research initiatives.
               </p>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 text-stone-300">
-                <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                  <Mail size={20} className="text-amber-500" />
+            <div className="space-y-8">
+              <div className="flex items-center gap-6 group">
+                <div className="w-16 h-16 rounded-2xl glass-panel flex items-center justify-center border-accent-blue/30 group-hover:border-accent-blue group-hover:scale-110 transition-all">
+                  <Mail size={28} className="text-accent-blue" />
                 </div>
-                <span>ahmedislamfaroukabbas@gmail.com</span>
+                <span className="text-white font-black text-xl tracking-tight">ahmedislamfaroukabbas@gmail.com</span>
               </div>
-              <div className="flex items-center gap-4 text-stone-300">
-                <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                  <Globe2 size={20} className="text-amber-500" />
+              <div className="flex items-center gap-6 group">
+                <div className="w-16 h-16 rounded-2xl glass-panel flex items-center justify-center border-accent-emerald/30 group-hover:border-accent-emerald group-hover:scale-110 transition-all">
+                  <Globe2 size={28} className="text-accent-emerald" />
                 </div>
-                <span>Available for Remote Collaboration</span>
+                <span className="text-stone-400 font-black text-xl tracking-tight">Distributed Research Node</span>
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <motion.a
-                href="mailto:ahmedislamfaroukabbas@gmail.com"
-                className="px-8 py-4 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold rounded-full flex items-center gap-3 shadow-lg shadow-amber-900/50"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Send Message
-                <ArrowRight size={18} />
-              </motion.a>
-              <motion.a
-                href="https://linkedin.com/in/ahmedbadr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-8 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-full flex items-center gap-3 hover:bg-white/10 transition-all"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <LinkedinIcon size={18} />
+            <div className="flex flex-wrap gap-6">
+              <a href="mailto:ahmedislamfaroukabbas@gmail.com" className="btn-quantum px-12 py-5 text-lg">Send Signal</a>
+              <a href="https://linkedin.com/in/ahmedbadr" className="btn-outline-quantum px-12 py-5 text-lg">
+                <LinkedinIcon size={24} />
                 LinkedIn
-              </motion.a>
+              </a>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-8">
             {[
-              { icon: Brain, label: 'Computer Vision', value: 'Expert' },
-              { icon: Cpu, label: 'Robotics', value: 'Advanced' },
-              { icon: Layers, label: 'NLP', value: 'Advanced' },
-              { icon: Zap, label: 'Sensor Fusion', value: 'Expert' },
-            ].map((skill, i) => (
-              <motion.div
-                key={skill.label}
-                className="p-6 rounded-2xl bg-black/40 backdrop-blur-sm border border-white/10"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <skill.icon size={24} className="text-amber-500 mb-4" />
-                <div className="text-white font-bold mb-1">{skill.label}</div>
-                <div className="text-sm text-stone-500">{skill.value}</div>
-              </motion.div>
+              { icon: Brain, label: 'Vision AI', value: 'SOTA' },
+              { icon: Cpu, label: 'Robotics', value: 'Nexus' },
+              { icon: Zap, label: 'Sensor Fusion', value: 'Core' },
+              { icon: Award, label: 'Strategy', value: 'Elite' },
+            ].map((skill) => (
+              <div key={skill.label} className="glass-panel p-10 rounded-4xl text-center group hover:border-accent-blue/40 transition-all duration-500">
+                <skill.icon size={40} className="text-accent-cyan mx-auto mb-6 group-hover:scale-125 group-hover:rotate-12 transition-transform duration-500" />
+                <div className="text-white font-black text-lg mb-2 tracking-tight">{skill.label}</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-500">{skill.value}</div>
+              </div>
             ))}
           </div>
         </div>
@@ -878,40 +572,28 @@ const ContactSection = () => (
 );
 
 const Footer = () => (
-  <footer className="py-12 border-t border-white/10">
-    <div className="max-w-7xl mx-auto px-6">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-            <span className="text-white font-bold text-sm">AB</span>
-          </div>
-          <div>
-            <div className="text-white font-bold">Ahmed Badr</div>
-            <div className="text-stone-500 text-xs">AI Researcher & Professional Athlete</div>
-          </div>
+  <footer className="py-24 border-t border-white/5 bg-obsidian-950/50 backdrop-blur-md">
+    <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-12">
+      <div className="flex items-center gap-5">
+        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center shadow-2xl shadow-accent-blue/20">
+          <span className="text-white font-black text-lg">AB</span>
         </div>
+        <div>
+          <div className="text-white font-black tracking-tight text-xl">Ahmed Badr</div>
+          <div className="text-accent-emerald text-[10px] uppercase font-black tracking-[0.3em]">Quantum Intelligence Architect</div>
+        </div>
+      </div>
 
-        <div className="flex items-center gap-6">
-          {[
-            { icon: GithubIcon, href: 'https://github.com/ahmedislamfarouk' },
-            { icon: LinkedinIcon, href: 'https://linkedin.com/in/ahmedbadr' },
-            { icon: Mail, href: 'mailto:ahmedislamfaroukabbas@gmail.com' },
-          ].map((social, i) => (
-            <motion.a
-              key={i}
-              href={social.href}
-              className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-stone-400 hover:text-white hover:bg-amber-600 hover:border-amber-600 transition-all duration-300"
-              whileHover={{ scale: 1.1, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <social.icon size={18} />
-            </motion.a>
-          ))}
-        </div>
+      <div className="text-stone-600 text-[10px] font-black uppercase tracking-[0.4em]">
+        © 2026 AHMED BADR // ALL SYSTEMS OPERATIONAL
+      </div>
 
-        <div className="text-stone-500 text-sm">
-          © 2024 Designed for Excellence
-        </div>
+      <div className="flex gap-8">
+        {[GithubIcon, LinkedinIcon, Mail].map((Icon, i) => (
+          <a key={i} href="#" className="text-stone-500 hover:text-accent-cyan transition-all duration-300 transform hover:scale-125">
+            <Icon size={22} />
+          </a>
+        ))}
       </div>
     </div>
   </footer>
@@ -921,15 +603,29 @@ const Footer = () => (
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#0a0908] text-white overflow-x-hidden selection:bg-amber-600/30 selection:text-amber-200">
-      {/* Grid Pattern Background */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,black,transparent)] pointer-events-none" />
+    <div className="min-h-screen bg-obsidian-950 text-white selection:bg-accent-blue/30 selection:text-accent-cyan selection:backdrop-blur-md">
+      <MorphingBlobs />
+      
+      {/* Dynamic Grid Overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:100px_100px] opacity-[0.05] pointer-events-none" />
+      
+      {/* Subtle Noise Texture */}
+      <div className="fixed inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       
       <NavBar />
       
-      <main>
+      <main className="relative z-10">
         <HeroSection />
-        <StatsSection />
+        
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <StatCard value="43" label="Elite Medals" delay={0} />
+            <StatCard value="12" label="Research Nodes" delay={0.1} />
+            <StatCard value="05" label="Active Swarms" delay={0.2} />
+            <StatCard value="SOTA" label="Performance" delay={0.3} />
+          </div>
+        </div>
+
         <SectionDivider />
         <AchievementsSection />
         <SectionDivider />
