@@ -14,3 +14,6 @@ yarn-error.log*
 # Dist files
 dist/
 build/
+
+# Private
+Ahmed_Badr_CV.pdf
