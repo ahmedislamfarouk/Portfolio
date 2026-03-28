@@ -593,7 +593,7 @@ const App: React.FC = () => {
                   whileHover={{ scale: 0.99 }}
                   className={`${idx === 0 ? 'lg:col-span-2' : 'lg:col-span-1'} bg-base-900 border border-base-700 rounded-[2rem] overflow-hidden relative aspect-video lg:aspect-auto min-h-[500px] group cursor-pointer`}
                 >
-                  <img src={project.image} alt={project.title} className="w-full h-full object-cover grayscale brightness-50 group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000 ease-out" />
+                  <img src={project.image} alt={project.title} loading="lazy" className="w-full h-full object-cover grayscale brightness-50 group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000 ease-out" />
                   <div className="absolute inset-0 bg-gradient-to-t from-base-950 via-base-950/20 to-transparent" />
                   <div className="absolute inset-0 p-12 flex flex-col justify-between">
                     <div className="flex justify-between items-start">
