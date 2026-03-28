@@ -130,22 +130,31 @@ const ProjectModal = ({ project, onClose }: { project: Project | null, onClose: 
               </div>
             </section>
 
-            <div className="pt-12 border-t border-white/5 flex justify-between items-center">
-              <div className="space-y-2">
-                <div className="text-4xl font-black italic tracking-tighter text-white">{project.stats}</div>
-                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-accent-muted">Status: {project.status}</div>
+            <div className="pt-12 border-t border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="text-4xl font-black italic tracking-tighter text-white">{project.stats}</div>
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-accent-blue/10 border border-accent-blue/20">
+                    <div className="status-pulse" />
+                    <span className="text-[8px] font-black uppercase tracking-widest text-accent-blue">Active Node</span>
+                  </div>
+                </div>
+                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-accent-muted flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
+                  Status: {project.status}
+                </div>
               </div>
               {project.link ? (
                 <a 
                   href={project.link} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="px-10 py-4 bg-white text-black font-black uppercase tracking-tighter rounded-full text-xs hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
+                  className="px-10 py-4 bg-white text-black font-black uppercase tracking-tighter rounded-full text-xs hover:scale-105 active:scale-95 transition-all flex items-center gap-3 w-full sm:w-auto justify-center"
                 >
                   Access Artifacts <ArrowUpRight size={16} strokeWidth={3} />
                 </a>
               ) : (
-                <button className="px-10 py-4 bg-white/5 text-white/20 font-black uppercase tracking-tighter rounded-full text-xs cursor-not-allowed border border-white/5">
+                <button className="px-10 py-4 bg-white/5 text-white/20 font-black uppercase tracking-tighter rounded-full text-xs cursor-not-allowed border border-white/5 w-full sm:w-auto">
                   Secure Access
                 </button>
               )}
@@ -173,6 +182,58 @@ const ScrollProgress = () => {
   );
 };
 
+const ResearchRadar = () => {
+  const points = [
+    { label: 'Vision', x: 100, y: 20 },
+    { label: 'Fusion', x: 180, y: 80 },
+    { label: 'NLP', x: 150, y: 170 },
+    { label: 'Control', x: 50, y: 170 },
+    { label: 'Swarm', x: 20, y: 80 },
+  ];
+
+  return (
+    <div className="relative w-64 h-64 mx-auto mb-12 group">
+      <svg viewBox="0 0 200 200" className="w-full h-full rotate-[-18deg]">
+        {/* Background Grids */}
+        {[0.2, 0.4, 0.6, 0.8, 1].map((r) => (
+          <polygon
+            key={r}
+            points={points.map(p => `${100 + (p.x - 100) * r},${100 + (p.y - 100) * r}`).join(' ')}
+            className="radar-grid"
+          />
+        ))}
+        {/* Axes */}
+        {points.map((p, i) => (
+          <line key={i} x1="100" y1="100" x2={p.x} y2={p.y} className="radar-grid opacity-20" />
+        ))}
+        {/* Data Area */}
+        <motion.polygon
+          initial={{ scale: 0 }}
+          whileInView={{ scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          points={points.map(p => `${100 + (p.x - 100) * 0.9},${100 + (p.y - 100) * 0.85}`).join(' ')}
+          className="radar-area group-hover:fill-accent-blue/40 transition-colors duration-500"
+        />
+      </svg>
+      {/* Labels */}
+      {points.map((p, i) => (
+        <div
+          key={i}
+          className="absolute text-[8px] font-black uppercase tracking-widest text-white/20 group-hover:text-white/60 transition-colors"
+          style={{ 
+            left: `${(p.x / 200) * 100}%`, 
+            top: `${(p.y / 200) * 100}%`,
+            transform: 'translate(-50%, -50%)'
+          }}
+        >
+          {p.label}
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -197,7 +258,13 @@ const Navigation = () => {
               <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
                 <span className="text-black font-black text-xl tracking-tighter uppercase select-none">B</span>
               </div>
-              <span className="text-2xl font-black tracking-tighter uppercase select-none hidden sm:block">Badr</span>
+              <div className="hidden sm:block">
+                <span className="text-2xl font-black tracking-tighter uppercase select-none">Badr</span>
+                <div className="flex items-center gap-2 mt-[-4px]" aria-live="polite">
+                  <div className="status-pulse" />
+                  <span className="text-[8px] font-black uppercase tracking-[0.2em] text-accent-blue">Live System</span>
+                </div>
+              </div>
             </motion.div>
 
             <div className="hidden md:flex items-center gap-12">
@@ -360,6 +427,8 @@ const LabsGrid = () => {
            <p className="text-white/40 max-w-xl mx-auto text-[10px] font-black uppercase tracking-[0.6em]">Core domains of algorithmic exploration and optimization.</p>
         </div>
 
+        <ResearchRadar />
+
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {labs.map((lab, i) => (
             <motion.div 
@@ -483,21 +552,21 @@ const Contact = () => {
           <form className="space-y-6 md:space-y-8 bg-base-900/30 p-8 md:p-20 rounded-[3rem] md:rounded-[4rem] border border-white/5 backdrop-blur-3xl relative z-10" onSubmit={(e) => e.preventDefault()}>
             <div className="grid md:grid-cols-2 gap-6 md:gap-8">
               <div className="space-y-2 md:space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 ml-6">Identity</label>
-                <input type="text" placeholder="Full Name" className="w-full bg-base-950 border border-white/10 rounded-full px-8 md:px-10 py-4 md:py-5 focus:outline-none focus:border-white transition-all text-sm uppercase tracking-widest placeholder:text-white/10" />
+                <label htmlFor="name" className="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 ml-6">Identity</label>
+                <input id="name" type="text" placeholder="Full Name" className="w-full bg-base-950 border border-white/10 rounded-full px-8 md:px-10 py-4 md:py-5 focus:outline-none focus:border-white transition-all text-sm uppercase tracking-widest placeholder:text-white/10" />
               </div>
               <div className="space-y-2 md:space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 ml-6">Gateway</label>
-                <input type="email" placeholder="Email Address" className="w-full bg-base-950 border border-white/10 rounded-full px-8 md:px-10 py-4 md:py-5 focus:outline-none focus:border-white transition-all text-sm uppercase tracking-widest placeholder:text-white/10" />
+                <label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 ml-6">Gateway</label>
+                <input id="email" type="email" placeholder="Email Address" className="w-full bg-base-950 border border-white/10 rounded-full px-8 md:px-10 py-4 md:py-5 focus:outline-none focus:border-white transition-all text-sm uppercase tracking-widest placeholder:text-white/10" />
               </div>
             </div>
             <div className="space-y-2 md:space-y-3">
-              <label className="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 ml-6">Objective</label>
-              <input type="text" placeholder="Subject / Project Type" className="w-full bg-base-950 border border-white/10 rounded-full px-8 md:px-10 py-4 md:py-5 focus:outline-none focus:border-white transition-all text-sm uppercase tracking-widest placeholder:text-white/10" />
+              <label htmlFor="subject" className="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 ml-6">Objective</label>
+              <input id="subject" type="text" placeholder="Subject / Project Type" className="w-full bg-base-950 border border-white/10 rounded-full px-8 md:px-10 py-4 md:py-5 focus:outline-none focus:border-white transition-all text-sm uppercase tracking-widest placeholder:text-white/10" />
             </div>
             <div className="space-y-2 md:space-y-3">
-              <label className="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 ml-6">Transmission</label>
-              <textarea rows={4} md:rows={5} placeholder="Detailed Message..." className="w-full bg-base-950 border border-white/10 rounded-[2.5rem] md:rounded-[3rem] px-8 md:px-10 py-6 md:py-8 focus:outline-none focus:border-white transition-all resize-none text-sm uppercase tracking-widest placeholder:text-white/10"></textarea>
+              <label htmlFor="message" className="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 ml-6">Transmission</label>
+              <textarea id="message" rows={4} md:rows={5} placeholder="Detailed Message..." className="w-full bg-base-950 border border-white/10 rounded-[2.5rem] md:rounded-[3rem] px-8 md:px-10 py-6 md:py-8 focus:outline-none focus:border-white transition-all resize-none text-sm uppercase tracking-widest placeholder:text-white/10"></textarea>
             </div>
             <button className="w-full py-5 md:py-6 bg-white text-black font-black uppercase tracking-[0.2em] rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 text-xs shadow-2xl shadow-white/5">
               Transmit Data <Zap size={18} fill="black" />
@@ -604,8 +673,12 @@ const App: React.FC = () => {
                 <motion.div 
                   key={project.title}
                   onClick={() => setSelectedProject(project)}
+                  onKeyDown={(e) => e.key === 'Enter' && setSelectedProject(project)}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`View details for ${project.title}`}
                   whileHover={{ y: -20 }}
-                  className={`${idx === 0 ? 'lg:col-span-2' : 'lg:col-span-1'} bg-base-900 border border-white/5 rounded-[3rem] md:rounded-[4rem] overflow-hidden relative aspect-video lg:aspect-auto min-h-[500px] md:min-h-[600px] group cursor-pointer transition-all duration-700`}
+                  className={`${idx === 0 ? 'lg:col-span-2' : 'lg:col-span-1'} bg-base-900 border border-white/5 rounded-[3rem] md:rounded-[4rem] overflow-hidden relative aspect-video lg:aspect-auto min-h-[500px] md:min-h-[600px] group cursor-pointer transition-all duration-700 outline-none focus-visible:ring-2 focus-role:ring-accent-blue`}
                 >
                   <img src={project.image} alt={project.title} loading="lazy" className="w-full h-full object-cover grayscale brightness-50 group-hover:scale-110 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-[1.5s] ease-out" />
                   <div className="absolute inset-0 bg-gradient-to-t from-base-950 via-base-950/40 to-transparent opacity-80" />
@@ -633,8 +706,12 @@ const App: React.FC = () => {
                 <motion.div 
                   key={project.title}
                   onClick={() => setSelectedProject(project)}
+                  onKeyDown={(e) => e.key === 'Enter' && setSelectedProject(project)}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`View details for ${project.title}`}
                   whileHover={{ y: -15 }}
-                  className="bg-base-900 border border-white/5 rounded-[3rem] md:rounded-[4rem] overflow-hidden relative aspect-square group cursor-pointer transition-all duration-700 shadow-2xl"
+                  className="bg-base-900 border border-white/5 rounded-[3rem] md:rounded-[4rem] overflow-hidden relative aspect-square group cursor-pointer transition-all duration-700 shadow-2xl outline-none focus-visible:ring-2 focus-role:ring-accent-blue"
                 >
                   <img src={project.image} alt={project.title} loading="lazy" className="w-full h-full object-cover grayscale brightness-50 group-hover:scale-110 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-[1.5s]" />
                   <div className="absolute inset-0 bg-gradient-to-t from-base-950 via-base-950/20 to-transparent p-10 md:p-12 flex flex-col justify-end">
