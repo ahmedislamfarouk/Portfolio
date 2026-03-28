@@ -172,26 +172,30 @@ const Navigation = () => {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-700 ${scrolled ? 'py-4' : 'py-10'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-[400] transition-all duration-700 ${scrolled ? 'py-4' : 'py-10'}`}>
         <div className="max-w-[1440px] mx-auto px-6 md:px-12">
           <div className={`flex items-center justify-between p-2 rounded-full transition-all duration-700 ${scrolled ? 'bg-base-900/80 backdrop-blur-2xl border border-white/5 px-8 shadow-2xl' : 'bg-transparent border-transparent'}`}>
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-4"
+              className="flex items-center gap-4 cursor-pointer"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
-              <span className="text-2xl font-black tracking-tighter uppercase select-none">Badr</span>
+              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                <span className="text-black font-black text-xl tracking-tighter uppercase select-none">B</span>
+              </div>
+              <span className="text-2xl font-black tracking-tighter uppercase select-none hidden sm:block">Badr</span>
             </motion.div>
 
             <div className="hidden md:flex items-center gap-12">
-              {['About', 'Projects', 'Awards', 'Labs'].map((item, i) => (
+              {['About', 'Projects', 'Awards', 'Labs', 'Contact'].map((item, i) => (
                 <motion.a 
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 * i }}
                   key={item} 
                   href={`#${item.toLowerCase()}`}
-                  className="text-[10px] font-black uppercase tracking-[0.3em] text-accent-muted hover:text-white transition-all duration-300 relative group"
+                  className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 hover:text-white transition-all duration-300 relative group"
                 >
                   {item}
                   <span className="absolute -bottom-1 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full" />
@@ -204,10 +208,10 @@ const Navigation = () => {
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center gap-4"
             >
-              <a href="#contact" className="hidden md:block text-[10px] font-black uppercase tracking-[0.3em] bg-white text-black px-10 py-3.5 rounded-full hover:bg-accent-muted hover:text-white transition-all duration-500 transform hover:scale-105 active:scale-95">
+              <a href="#contact" className="hidden md:block text-[10px] font-black uppercase tracking-[0.3em] bg-white text-black px-10 py-3.5 rounded-full hover:bg-white/90 transition-all duration-500 transform hover:scale-105 active:scale-95 shadow-xl">
                 Sync Project
               </a>
-              <button className="md:hidden text-white p-2" onClick={() => setIsOpen(!isOpen)}>
+              <button className="text-white p-2 w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 transition-all" onClick={() => setIsOpen(!isOpen)}>
                 {isOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             </motion.div>
@@ -217,21 +221,45 @@ const Navigation = () => {
         <AnimatePresence>
           {isOpen && (
             <motion.div 
-              initial={{ opacity: 0, clipPath: 'circle(0% at 100% 0%)' }}
-              animate={{ opacity: 1, clipPath: 'circle(150% at 100% 0%)' }}
-              exit={{ opacity: 0, clipPath: 'circle(0% at 100% 0%)' }}
-              className="fixed inset-0 bg-base-950 z-[-1] flex flex-col items-center justify-center gap-12 md:hidden"
+              initial={{ opacity: 0, x: '100%' }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-0 bg-base-950/98 backdrop-blur-3xl z-[300] flex flex-col items-center justify-center p-12 overflow-hidden"
             >
-              {['About', 'Projects', 'Awards', 'Labs', 'Contact'].map((item) => (
-                <a 
-                  key={item} 
-                  href={`#${item.toLowerCase()}`}
-                  onClick={() => setIsOpen(false)}
-                  className="text-6xl font-black tracking-tighter uppercase hover:text-accent-muted transition-colors"
-                >
-                  {item}
-                </a>
-              ))}
+              <div className="absolute top-0 left-0 w-full h-full noise-bg opacity-[0.03] pointer-events-none" />
+              <div className="space-y-8 text-center relative z-10">
+                {['About', 'Projects', 'Awards', 'Labs', 'Contact'].map((item, i) => (
+                  <motion.div
+                    key={item}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * i }}
+                  >
+                    <a 
+                      href={`#${item.toLowerCase()}`}
+                      onClick={() => setIsOpen(false)}
+                      className="text-6xl sm:text-8xl font-black tracking-tighter uppercase hover:italic transition-all duration-500 block"
+                    >
+                      {item}
+                    </a>
+                  </motion.div>
+                ))}
+              </div>
+              
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="absolute bottom-12 left-0 w-full px-12 flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-white/30"
+              >
+                <div>Ahmed Badr // 2026</div>
+                <div className="flex gap-6">
+                   <a href="#" className="hover:text-white transition-colors">GH</a>
+                   <a href="#" className="hover:text-white transition-colors">LN</a>
+                   <a href="#" className="hover:text-white transition-colors">TW</a>
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
