@@ -12,7 +12,7 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
-import { projects, Project } from './data/projects';
+import { projects, type Project } from './data/projects';
 
 // Custom SVG Icons for Github/Linkedin since they might be missing in this version
 const GithubIcon = ({ size = 24 }: { size?: number }) => (

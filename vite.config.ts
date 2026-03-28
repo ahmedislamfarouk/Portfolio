@@ -7,7 +7,7 @@ export default defineConfig({
   base: '/Portfolio/',
   server: {
     watch: {
-      ignored: ['**/.agent/**', '**/.claude/**', '**/.codebuddy/**', '**/.codex/**', '**/.continue/**', '**/.cursor/**', '**/.gemini/**', '**/.github/**', '**/.kiro/**', '**/.opencode/**', '**/.qoder/**', '**/.qwen/**', '**/.roo/**', '**/.trae/**', '**/.windsurf/**'],
+      ignored: ['**/.*/**'],
     },
   },
 })
