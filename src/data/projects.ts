@@ -26,7 +26,8 @@ export const projects: Project[] = [
       "Awarded 3rd Place at the R!L competition for research excellence."
     ],
     tech: ["TensorFlow", "Scikit-learn", "XGBoost", "CatBoost", "OpenCV", "Pandas"],
-    status: "Deployed"
+    status: "Deployed",
+    link: "https://github.com/ahmedislamfarouk/renal-rejection-classification"
   },
   {
     title: "Autonomous Fleet",
@@ -42,7 +43,8 @@ export const projects: Project[] = [
       "Achieved sub-100ms latency for high-performance responsiveness."
     ],
     tech: ["ROS 2", "YOLOv8", "Docker", "ZED SDK", "C++", "Python"],
-    status: "Deployed"
+    status: "Deployed",
+    link: "https://github.com/ahmedislamfarouk/autonomous-golf-cart"
   },
   {
     title: "SkyVision Swarm",
@@ -58,7 +60,8 @@ export const projects: Project[] = [
       "Building a real-time sensor fusion pipeline for disaster response."
     ],
     tech: ["ROS 2", "Computer Vision", "LLMs", "C++", "Python", "Sensor Fusion"],
-    status: "In Development"
+    status: "In Development",
+    link: "https://github.com/ahmedislamfarouk/skyvision-drone-swarm"
   },
   {
     title: "Intelligent Assets",
@@ -74,7 +77,8 @@ export const projects: Project[] = [
       "Developed multimodal retrieval for text, diagrams, and voice data."
     ],
     tech: ["FastAPI", "React", "PostgreSQL", "BERT", "RAG", "FAISS"],
-    status: "Deployed"
+    status: "Deployed",
+    link: "https://github.com/ahmedislamfarouk/intelligent-assets-repository"
   },
   {
     title: "Emotion Recog",
@@ -90,7 +94,8 @@ export const projects: Project[] = [
       "Collaborating on developing the core emotion monitoring framework."
     ],
     tech: ["PyTorch", "TensorFlow", "OpenCV", "Vector Databases", "RAG", "Multimodal Fusion"],
-    status: "Research Phase"
+    status: "Research Phase",
+    link: "https://github.com/ahmedislamfarouk/emotion-recognition"
   },
   {
     title: "Sobriety Detection",
@@ -106,7 +111,8 @@ export const projects: Project[] = [
       "Designed a comprehensive CSV-based data export system for research."
     ],
     tech: ["Python", "OpenCV", "OpenFace", "Siamese Networks", "Deep Learning"],
-    status: "Deployed"
+    status: "Deployed",
+    link: "https://github.com/ahmedislamfarouk/sobriety-detection"
   },
   {
     title: "Egyptian Museum App",
@@ -122,7 +128,8 @@ export const projects: Project[] = [
       "Implemented NLP techniques to simulate educational conversations about artifacts."
     ],
     tech: ["React", "NLP", "Socket.io", "Chatbots"],
-    status: "Deployed"
+    status: "Deployed",
+    link: "https://github.com/ahmedislamfarouk/egyptian-museum-app"
   },
   {
     title: "Snake Game AI",
@@ -138,7 +145,8 @@ export const projects: Project[] = [
       "Integrated networking components for synchronized multiplayer."
     ],
     tech: ["Python", "Pygame", "Reinforcement Learning", "Socket Programming", "Threading"],
-    status: "Deployed"
+    status: "Deployed",
+    link: "https://github.com/ahmedislamfarouk/snake-game-ai"
   },
   {
     title: "Nomeda",
@@ -153,6 +161,7 @@ export const projects: Project[] = [
       "Managing cross-functional development tasks and strategic technical direction."
     ],
     tech: ["Business Strategy", "Product Management", "AI Engineering", "Software Architecture"],
-    status: "In Development"
+    status: "In Development",
+    link: "https://github.com/ahmedislamfarouk/nomeda"
   }
 ];

@@ -133,9 +133,20 @@ const ProjectModal = ({ project, onClose }: { project: Project | null, onClose: 
                 <div className="text-3xl font-black italic tracking-tighter">{project.stats}</div>
                 <div className="text-[10px] font-black uppercase tracking-widest text-accent-muted">Status: {project.status}</div>
               </div>
-              <button className="px-8 py-3 bg-white text-black font-bold rounded-full text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all">
-                Access Artifacts
-              </button>
+              {project.link ? (
+                <a 
+                  href={project.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="px-8 py-3 bg-white text-black font-bold rounded-full text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                >
+                  Access Artifacts <ArrowUpRight size={14} />
+                </a>
+              ) : (
+                <button className="px-8 py-3 bg-white/10 text-white/40 font-bold rounded-full text-xs uppercase tracking-widest cursor-not-allowed">
+                  Private Access
+                </button>
+              )}
             </div>
           </div>
         </div>
