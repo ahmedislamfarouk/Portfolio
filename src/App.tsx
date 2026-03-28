@@ -1,6 +1,5 @@
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 import {
-  Rocket,
   Mail,
   Target,
   Brain,
@@ -13,6 +12,7 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
+import { projects, Project } from './data/projects';
 
 // Custom SVG Icons for Github/Linkedin since they might be missing in this version
 const GithubIcon = ({ size = 24 }: { size?: number }) => (
@@ -29,8 +29,6 @@ const LinkedinIcon = ({ size = 24 }: { size?: number }) => (
     <circle cx="4" cy="4" r="2" />
   </svg>
 );
-
-import { projects, Project } from './data/projects';
 
 const labs = [
   {
@@ -404,8 +402,75 @@ const Achievements = () => {
   );
 };
 
+const Contact = () => {
+  return (
+    <section id="contact" className="py-40 px-6 md:px-12 bg-base-950 relative overflow-hidden">
+      <div className="max-w-[1440px] mx-auto">
+        <div className="grid lg:grid-cols-2 gap-20">
+          <div className="space-y-12">
+            <div className="space-y-6">
+              <h2 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-[0.8]">
+                Start <br /><span className="text-luxury">Terminal</span>
+              </h2>
+              <p className="text-2xl text-accent-muted font-light max-w-md leading-relaxed">
+                Initiate a secure connection for project inquiries, research collaborations, or architectural consultations.
+              </p>
+            </div>
+
+            <div className="space-y-8">
+              <div className="flex items-center gap-6 group cursor-pointer">
+                <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                  <Mail size={20} />
+                </div>
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-accent-muted">Direct Email</div>
+                  <div className="text-lg font-bold">ahmedislamfaroukabbas@gmail.com</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-6 group cursor-pointer">
+                <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                  <Target size={20} />
+                </div>
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-accent-muted">Location</div>
+                  <div className="text-lg font-bold">Cairo, Egypt // Global Remote</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <form className="space-y-6 bg-base-900/50 p-8 md:p-12 rounded-[2rem] border border-white/5 backdrop-blur-sm" onSubmit={(e) => e.preventDefault()}>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-accent-muted ml-4">Identity</label>
+                <input type="text" placeholder="Full Name" className="w-full bg-base-950 border border-white/10 rounded-full px-8 py-4 focus:outline-none focus:border-white transition-all" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-accent-muted ml-4">Gateway</label>
+                <input type="email" placeholder="Email Address" className="w-full bg-base-950 border border-white/10 rounded-full px-8 py-4 focus:outline-none focus:border-white transition-all" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-accent-muted ml-4">Objective</label>
+              <input type="text" placeholder="Subject / Project Type" className="w-full bg-base-950 border border-white/10 rounded-full px-8 py-4 focus:outline-none focus:border-white transition-all" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-accent-muted ml-4">Transmission</label>
+              <textarea rows={4} placeholder="Detailed Message..." className="w-full bg-base-950 border border-white/10 rounded-[2rem] px-8 py-6 focus:outline-none focus:border-white transition-all resize-none"></textarea>
+            </div>
+            <button className="w-full py-5 bg-white text-black font-black uppercase tracking-widest rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+              Transmit Data <Zap size={16} fill="black" />
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const Footer = () => (
-  <footer id="contact" className="py-40 px-6 md:px-12 bg-base-950 border-t border-white/5 relative overflow-hidden">
+  <footer id="footer" className="py-40 px-6 md:px-12 bg-base-950 border-t border-white/5 relative overflow-hidden">
     <div className="max-w-[1440px] mx-auto text-center space-y-32 relative z-10">
       <div className="space-y-8">
         <h2 className="text-[12vw] md:text-[18rem] font-black tracking-tighter uppercase leading-[0.7] select-none">
@@ -450,7 +515,7 @@ const Footer = () => (
 );
 
 const App: React.FC = () => {
-  const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   return (
     <div className="selection:bg-white selection:text-black bg-base-950">
@@ -528,31 +593,7 @@ const App: React.FC = () => {
         </section>
         <LabsGrid />
         <Achievements />
-      </main>
-      <Footer />
-
-      <AnimatePresence>
-        {selectedProject && (
-          <ProjectModal 
-            project={selectedProject} 
-            onClose={() => setSelectedProject(null)} 
-          />
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
-
-export default App;
-oject.title}</h3>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-        <LabsGrid />
-        <Achievements />
+        <Contact />
       </main>
       <Footer />
 
