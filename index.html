@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="scroll-behavior: smooth;">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0c0a09" />
     <meta name="description" content="Ahmed Badr - AI Researcher & Professional Athlete specializing in Computer Vision, NLP, and Autonomous Robotics" />
@@ -13,7 +13,15 @@
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Ahmed Badr | Crafting Intelligence" />
     <meta property="og:description" content="AI Researcher & Professional Athlete - Computer Vision, Sensor Fusion, Autonomous Robotics" />
+    <meta property="og:url" content="https://ahmedbadr.ai" />
+    <meta property="og:image" content="/src/assets/hero.png" />
     
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Ahmed Badr | AI Researcher" />
+    <meta name="twitter:description" content="Engineering the nexus of Sentient Vision and Autonomous Control." />
+    <meta name="twitter:image" content="/src/assets/hero.png" />
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +29,14 @@
     
     <title>Ahmed Badr | AI Researcher & Professional Athlete</title>
   </head>
-  <body>
+  <body class="bg-[#050505] text-white selection:bg-white selection:text-black overflow-x-hidden font-['Space_Grotesk']">
+    <!-- Mesh Gradient Background -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none opacity-50">
+      <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full animate-pulse"></div>
+      <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-600/20 blur-[120px] rounded-full animate-pulse" style="animation-delay: 2s;"></div>
+      <div class="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-indigo-600/10 blur-[100px] rounded-full animate-pulse" style="animation-delay: 4s;"></div>
+    </div>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
