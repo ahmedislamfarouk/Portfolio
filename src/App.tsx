@@ -30,99 +30,7 @@ const LinkedinIcon = ({ size = 24 }: { size?: number }) => (
   </svg>
 );
 
-// --- DATA ---
-const projects = [
-  {
-    title: "Renal Rejection AI",
-    category: "Medical Diagnostics / Deep Learning",
-    image: "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200",
-    stats: "3rd Place @ R!L",
-    year: "2024",
-    description: "A non-invasive approach to classify renal rejection grades in kidney transplant patients. Developed during a research internship at the University of Louisville bioengineering labs.",
-    details: [
-      "Integrated imaging, genomic, and clinical data for multi-modal classification.",
-      "Implemented Random Forest, SVM, Neural Networks, XGBoost, and CatBoost.",
-      "Performed extensive cross-validation and hyperparameter tuning.",
-      "Awarded 3rd Place at the R!L competition for research excellence."
-    ],
-    tech: ["TensorFlow", "Scikit-learn", "XGBoost", "CatBoost", "OpenCV", "Pandas"]
-  },
-  {
-    title: "Autonomous Fleet",
-    category: "Robotics / Perception",
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200",
-    stats: "YOLOv8 + ROS 2",
-    year: "2024",
-    description: "Developed a ROS 2–based perception and control system for autonomous golf cart navigation at James Madison University.",
-    details: [
-      "Implemented YOLOv8 & SSD algorithms for robust real-time object detection.",
-      "Utilized ZED 2i stereo camera for depth estimation and obstacle detection.",
-      "Designed modular ROS 2 publisher–subscriber nodes for system planning.",
-      "Achieved sub-100ms latency for high-performance responsiveness."
-    ],
-    tech: ["ROS 2", "YOLOv8", "Docker", "ZED SDK", "C++", "Python"]
-  },
-  {
-    title: "SkyVision Swarm",
-    category: "Multi-Agent Systems / Fusion",
-    image: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=1200",
-    stats: "Real-time Fusion",
-    year: "2023",
-    description: "AI-powered aerial monitoring and vision system designed for real-time environmental analysis using drone swarms.",
-    details: [
-      "Designing ROS 2-based multi-drone control and CV pipelines.",
-      "Implementing collision avoidance with modular perception nodes.",
-      "Integrating LLM-assisted situational analysis for anomaly detection.",
-      "Building a real-time sensor fusion pipeline for disaster response."
-    ],
-    tech: ["ROS 2", "Computer Vision", "LLMs", "C++", "Python", "Sensor Fusion"]
-  },
-  {
-    title: "Emotion Recog",
-    category: "Multimodal AI (SER & FER)",
-    image: "https://images.unsplash.com/photo-1527433270404-21b12746a108?w=1200",
-    stats: "SER + FER Fusion",
-    year: "2024",
-    description: "Comprehensive AI framework focused on Speech Emotion Recognition (SER) and Facial Emotion Recognition (FER) systems.",
-    details: [
-      "Leveraging deep learning architectures for high-accuracy classification.",
-      "Exploring RAG pipelines with vector databases for enhanced reasoning.",
-      "Joint analysis of audio and visual cues for robustness.",
-      "Collaborating on developing the core emotion monitoring framework."
-    ],
-    tech: ["PyTorch", "TensorFlow", "OpenCV", "Vector Databases", "RAG", "Multimodal Fusion"]
-  },
-  {
-    title: "Sobriety Detection",
-    category: "Computer Vision / Health",
-    image: "https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?w=1200",
-    stats: "JMU Research",
-    year: "2024",
-    description: "Specialized AI platform built to detect intoxication levels through non-invasive facial recognition and behavioral analysis.",
-    details: [
-      "Built a modular pipeline using Siamese Networks for user profiling.",
-      "Developed eye-tracking algorithms with OpenFace (288+ features).",
-      "Implemented facial behavior analysis for intoxication detection.",
-      "Designed a comprehensive CSV-based data export system for research."
-    ],
-    tech: ["Python", "OpenCV", "OpenFace", "Siamese Networks", "Deep Learning"]
-  },
-  {
-    title: "Snake Game AI",
-    category: "Reinforcement Learning",
-    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200",
-    stats: "Q-Learning / DQN",
-    year: "2023",
-    description: "Enhanced version of the classic Snake game featuring AI-driven opponents and real-time multiplayer gameplay.",
-    details: [
-      "Implemented Reinforcement Learning algorithms (Q-Learning / DQN).",
-      "Designed advanced decision-making systems for AI opponents.",
-      "Utilized threading and concurrency for zero-latency interactions.",
-      "Integrated networking components for synchronized multiplayer."
-    ],
-    tech: ["Python", "Pygame", "Reinforcement Learning", "Socket Programming", "Threading"]
-  }
-];
+import { projects, Project } from './data/projects';
 
 const labs = [
   {
@@ -149,7 +57,7 @@ const labs = [
 
 // --- COMPONENTS ---
 
-const ProjectModal = ({ project, onClose }: { project: typeof projects[0] | null, onClose: () => void }) => {
+const ProjectModal = ({ project, onClose }: { project: Project | null, onClose: () => void }) => {
   if (!project) return null;
 
   return (
@@ -225,7 +133,7 @@ const ProjectModal = ({ project, onClose }: { project: typeof projects[0] | null
             <div className="pt-12 border-t border-white/5 flex justify-between items-center">
               <div className="space-y-1">
                 <div className="text-3xl font-black italic tracking-tighter">{project.stats}</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-accent-muted">Status: Deployed</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-accent-muted">Status: {project.status}</div>
               </div>
               <button className="px-8 py-3 bg-white text-black font-bold rounded-full text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all">
                 Access Artifacts
@@ -336,66 +244,67 @@ const Navigation = () => {
 
 const Hero = () => {
   return (
-    <section id="about" className="min-h-screen relative flex flex-col justify-center pt-32 overflow-hidden px-6 md:px-12">
-      <div className="max-w-[1440px] mx-auto w-full relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
+    <section id="about" className="min-h-screen relative flex items-center justify-center px-6 py-20 overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <img src="/src/assets/hero.png" className="w-full h-full object-cover opacity-20 grayscale brightness-50" alt="Hero Background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-base-950/80 via-transparent to-base-950" />
+      </div>
+      
+      <div className="relative z-10 w-full max-w-5xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          className="space-y-10"
+          className="backdrop-blur-2xl bg-white/5 border border-white/10 p-12 md:p-20 rounded-[3rem] shadow-2xl transition-all duration-700 hover:border-white/20 hover:bg-white/10 group"
         >
-          <div className="flex items-center gap-6 text-accent-muted">
-            <span className="h-px w-16 bg-accent-subtle" />
+          <div className="flex items-center gap-4 mb-10">
+            <span className="h-px w-12 bg-white/30 group-hover:w-20 transition-all duration-500" />
             <motion.span 
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ duration: 3, repeat: Infinity }}
-              className="text-[10px] font-black uppercase tracking-[0.4em]"
+              className="text-[10px] font-black uppercase tracking-[0.5em] text-white/50 group-hover:text-white transition-colors duration-500"
             >
               Intelligence // Performance // Discipline
             </motion.span>
           </div>
-          
-          <h1 className="text-[15vw] md:text-[13rem] leading-[0.75] font-black uppercase tracking-tighter-extra">
+
+          <h1 className="text-6xl md:text-[8rem] font-heading font-black leading-[0.85] uppercase tracking-tighter mb-10 select-none">
             Ahmed <br />
-            <span className="text-luxury">Badr</span>
+            <span className="text-white/30 italic font-normal transition-all duration-700 group-hover:text-white">Badr</span>
           </h1>
 
-          <div className="grid lg:grid-cols-2 gap-20 pt-10">
+          <div className="grid md:grid-cols-2 gap-12 items-end pt-6">
             <div className="space-y-8">
-              <p className="text-2xl md:text-4xl text-accent-muted font-light leading-[1.1] max-w-3xl">
-                Engineering the nexus of <span className="text-white italic">Sentient Vision</span> and <span className="text-white">Autonomous Control</span>. SOTA research engineer and professional champion.
+              <p className="text-xl md:text-2xl text-white/70 font-light leading-relaxed max-w-md">
+                Engineering the nexus of <span className="text-white font-medium">Sentient Vision</span> and <span className="text-white">Autonomous Control</span>. SOTA research engineer and professional champion.
               </p>
-              <div className="flex gap-4">
-                 <button className="px-10 py-4 bg-white text-black font-bold rounded-full transition-all hover:scale-105 active:scale-95">Experience Artifacts</button>
-                 <button className="px-10 py-4 border border-accent-muted text-white font-bold rounded-full transition-all hover:border-white hover:bg-white/5">The Lab</button>
+              <div className="flex flex-wrap gap-4 pt-4">
+                <a href="#projects" className="px-10 py-4 bg-white text-black font-bold rounded-full transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
+                  Experience Artifacts
+                  <ArrowUpRight size={20} strokeWidth={3} />
+                </a>
+                <a href="#labs" className="px-10 py-4 border border-white/20 text-white font-bold rounded-full transition-all hover:border-white hover:bg-white/5 backdrop-blur-md">
+                  The Lab
+                </a>
               </div>
             </div>
-            
-            <div className="flex items-end justify-start lg:justify-end gap-16">
-              <div className="space-y-2">
-                <div className="text-7xl font-black italic tracking-tighter">43+</div>
-                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-accent-muted">Global Honors</div>
+
+            <div className="flex gap-12 justify-start md:justify-end pb-2 border-l border-white/10 md:pl-12">
+              <div className="space-y-1">
+                <div className="text-5xl font-heading font-black italic tracking-tighter text-white">43+</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Global Honors</div>
               </div>
-              <div className="space-y-2">
-                <div className="text-7xl font-black italic tracking-tighter">AI</div>
-                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-accent-muted">Core Foundation</div>
+              <div className="space-y-1">
+                <div className="text-5xl font-heading font-black italic tracking-tighter text-white">AI</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Core Pillar</div>
               </div>
             </div>
           </div>
         </motion.div>
       </div>
-
-      <div className="absolute inset-0 noise-bg opacity-[0.04] pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_0%,transparent_100%)] pointer-events-none" />
       
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.1, 1],
-          opacity: [0.1, 0.2, 0.1]
-        }}
-        transition={{ duration: 10, repeat: Infinity }}
-        className="absolute -right-20 top-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border border-white/5 z-0"
-      />
+      <div className="absolute inset-0 noise-bg opacity-[0.04] pointer-events-none" />
     </section>
   );
 };
