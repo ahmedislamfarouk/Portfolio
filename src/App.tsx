@@ -908,6 +908,52 @@ const ContactSection = () => {
   );
 };
 
+// ── CTA Section ──────────────────────────────────────────────────────────────
+const CTASection = () => (
+  <section className="section-spacing relative overflow-hidden">
+    <div className="absolute inset-0 dot-grid opacity-20 pointer-events-none" />
+    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent-cyan/[0.02] to-transparent pointer-events-none" />
+    <div className="max-container relative z-10 text-center space-y-10">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="space-y-6"
+      >
+        <div className="section-label justify-center">Ready to Collaborate</div>
+        <h2 className="text-[clamp(3.5rem,10vw,10rem)] font-black uppercase tracking-ultra leading-ultra">
+          Build<br />
+          <span className="text-gradient">Together</span>
+        </h2>
+        <p className="text-white/30 text-base max-w-md mx-auto leading-relaxed">
+          Whether it's AI research, autonomous systems, or engineering the next breakthrough — let's connect.
+        </p>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="flex flex-wrap gap-4 justify-center"
+      >
+        <a href="#contact" className="btn-primary !text-sm !px-10 !py-4">
+          Start a Conversation <ArrowUpRight size={16} />
+        </a>
+        <a
+          href="https://github.com/ahmedislamfarouk"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-ghost !text-sm !px-10 !py-4"
+        >
+          <GithubIcon size={16} />
+          View GitHub
+        </a>
+      </motion.div>
+    </div>
+  </section>
+);
+
 // ── Footer ────────────────────────────────────────────────────────────────────
 const Footer = () => (
   <footer className="border-t border-white/[0.06] py-12 relative">
@@ -964,6 +1010,7 @@ const App: React.FC = () => {
         <LabsSection />
         <AchievementsSection />
         <ContactSection />
+        <CTASection />
       </main>
 
       <Footer />
