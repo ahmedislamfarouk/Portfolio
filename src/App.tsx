@@ -58,6 +58,33 @@ const researchAreas = [
   },
 ];
 
+// ── Marquee Ticker ────────────────────────────────────────────────────────────
+const MarqueeTicker = () => {
+  const items = [
+    'Computer Vision', 'ROS 2', 'Sensor Fusion', 'YOLOv8', 'Autonomous Systems',
+    'Large Language Models', 'Reinforcement Learning', 'Medical AI', 'RAG Pipelines',
+    'Drone Swarms', 'Taekwondo Champion', 'Edge Deployment',
+  ];
+  const doubled = [...items, ...items];
+
+  return (
+    <div className="py-4 border-y border-white/[0.06] overflow-hidden bg-base-900/30 backdrop-blur-sm">
+      <motion.div
+        animate={{ x: ['0%', '-50%'] }}
+        transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+        className="flex items-center gap-0 whitespace-nowrap"
+      >
+        {doubled.map((item, i) => (
+          <span key={i} className="flex items-center">
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/25 px-6">{item}</span>
+            <span className="text-accent-cyan/40 text-xs">·</span>
+          </span>
+        ))}
+      </motion.div>
+    </div>
+  );
+};
+
 // ── Scroll Progress ───────────────────────────────────────────────────────────
 const ScrollProgress = () => {
   const { scrollYProgress } = useScroll();
@@ -249,9 +276,13 @@ const Hero = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="section-label"
+              className="flex flex-wrap items-center gap-4"
             >
-              Cairo, Egypt · Available Globally
+              <span className="section-label">Cairo, Egypt · Available Globally</span>
+              <span className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-accent-cyan/25 bg-accent-cyan/5 text-[10px] font-bold uppercase tracking-[0.3em] text-accent-cyan">
+                <span className="status-dot" aria-hidden="true" />
+                Building: SkyVision Swarm
+              </span>
             </motion.div>
 
             <motion.h1
@@ -545,6 +576,38 @@ const ProjectsSection = ({ onSelect }: { onSelect: (p: Project) => void }) => {
         </div>
       </div>
     </section>
+  );
+};
+
+// ── Stats Banner ─────────────────────────────────────────────────────────────
+const StatsBanner = () => {
+  const stats = [
+    { val: '43+', label: 'International Awards' },
+    { val: '9', label: 'AI Projects Shipped' },
+    { val: '5', label: 'Research Domains' },
+    { val: '2+', label: 'Years in ML Research' },
+  ];
+
+  return (
+    <div className="border-y border-white/[0.06] bg-base-900/20">
+      <div className="max-container py-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 md:divide-x md:divide-white/[0.06]">
+          {stats.map((s, i) => (
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="text-center md:px-12"
+            >
+              <div className="text-4xl md:text-5xl font-black tracking-ultra text-white">{s.val}</div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/25 mt-2">{s.label}</div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -895,7 +958,9 @@ const App: React.FC = () => {
 
       <main>
         <Hero />
+        <MarqueeTicker />
         <ProjectsSection onSelect={setSelectedProject} />
+        <StatsBanner />
         <LabsSection />
         <AchievementsSection />
         <ContactSection />
