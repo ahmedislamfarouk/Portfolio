@@ -58,6 +58,93 @@ const researchAreas = [
   },
 ];
 
+// ── Background Wave Light ─────────────────────────────────────────────────────
+const WaveLight = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    // Respect prefers-reduced-motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animId: number;
+    let t = 0;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const drawWave = (
+      amplitude: number,
+      frequency: number,
+      phaseShift: number,
+      lineWidth: number,
+      alpha: number,
+      blurPx: number,
+    ) => {
+      const w = canvas.width;
+      const h = canvas.height;
+      const midY = h * 0.42;
+
+      ctx.save();
+      ctx.filter = `blur(${blurPx}px)`;
+      ctx.beginPath();
+
+      for (let x = 0; x <= w; x += 3) {
+        const y =
+          midY +
+          amplitude * Math.sin((x / w) * Math.PI * frequency + phaseShift + t);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+
+      ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+      ctx.lineWidth = lineWidth;
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Layer 1 — thick soft glow (very transparent)
+      drawWave(90, 2.5, 0, 120, 0.018, 55);
+      // Layer 2 — medium wave
+      drawWave(70, 3.0, Math.PI * 0.4, 60, 0.025, 30);
+      // Layer 3 — crisp bright line
+      drawWave(55, 3.5, Math.PI * 0.8, 2, 0.12, 0);
+      // Layer 4 — second crisp line (offset phase)
+      drawWave(40, 2.8, Math.PI * 1.4, 1, 0.06, 0);
+
+      t += 0.004; // very slow drift
+      animId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      className="fixed inset-0 pointer-events-none"
+      style={{ zIndex: 1 }}
+    />
+  );
+};
+
 // ── Marquee Ticker ────────────────────────────────────────────────────────────
 const MarqueeTicker = () => {
   const items = [
@@ -956,7 +1043,7 @@ const CTASection = () => (
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 const Footer = () => (
-  <footer className="border-t border-white/[0.06] py-12 relative">
+  <footer className="border-t border-white/[0.06] py-12 relative" style={{ zIndex: 2 }}>
     <div className="max-container">
       <div className="flex flex-col md:flex-row justify-between items-center gap-8">
         <div className="flex items-center gap-3">
@@ -999,10 +1086,11 @@ const App: React.FC = () => {
 
   return (
     <div className="bg-base-950 min-h-screen selection:bg-accent-cyan/30 selection:text-white">
+      <WaveLight />
       <ScrollProgress />
       <Navigation />
 
-      <main>
+      <main className="relative" style={{ zIndex: 2 }}>
         <Hero />
         <MarqueeTicker />
         <ProjectsSection onSelect={setSelectedProject} />
