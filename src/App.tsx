@@ -63,7 +63,6 @@ const WaveLight = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    // Respect prefers-reduced-motion
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const canvas = canvasRef.current;
@@ -73,6 +72,11 @@ const WaveLight = () => {
 
     let animId: number;
     let t = 0;
+    let scrollY = 0;
+
+    const handleScroll = () => {
+      scrollY = window.scrollY;
+    };
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -80,50 +84,85 @@ const WaveLight = () => {
     };
     resize();
     window.addEventListener('resize', resize);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
-    const drawWave = (
+    /**
+     * Draws a sine wave with a thick "bloom" glow.
+     * Uses canvas filters for high-quality blurring.
+     */
+    const drawGlowWave = (
+      midY: number,
       amplitude: number,
       frequency: number,
-      phaseShift: number,
-      lineWidth: number,
-      alpha: number,
-      blurPx: number,
+      phase: number,
+      opacityFactor: number = 1
     ) => {
       const w = canvas.width;
-      const h = canvas.height;
-      const midY = h * 0.42;
+      
+      // Smooth vertical movement that loops
+      const timeOffset = t * 20;
+      const scrollOffset = scrollY * 0.3;
+      const totalOffset = (timeOffset + scrollOffset) % (canvas.height * 1.2);
+      const actualMidY = (midY + totalOffset) % (canvas.height + 200) - 100;
+
+      const buildPath = () => {
+        ctx.beginPath();
+        for (let x = -50; x <= w + 50; x += 5) {
+          const y = actualMidY + amplitude * Math.sin((x / w) * Math.PI * frequency + phase + t);
+          x === -50 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+      };
+
+      // Richer gradient: slow ramp-in, bright plateau, slow ramp-out
+      const getGradient = (alpha: number) => {
+        const g = ctx.createLinearGradient(0, 0, w, 0);
+        g.addColorStop(0,    `rgba(255,255,255,0)`);
+        g.addColorStop(0.08, `rgba(255,255,255,${alpha * 0.15})`);
+        g.addColorStop(0.22, `rgba(255,255,255,${alpha * 0.75})`);
+        g.addColorStop(0.38, `rgba(255,255,255,${alpha})`);
+        g.addColorStop(0.50, `rgba(255,255,255,${alpha})`);
+        g.addColorStop(0.62, `rgba(255,255,255,${alpha})`);
+        g.addColorStop(0.78, `rgba(255,255,255,${alpha * 0.75})`);
+        g.addColorStop(0.92, `rgba(255,255,255,${alpha * 0.15})`);
+        g.addColorStop(1,    `rgba(255,255,255,0)`);
+        return g;
+      };
 
       ctx.save();
-      ctx.filter = `blur(${blurPx}px)`;
-      ctx.beginPath();
+      ctx.globalCompositeOperation = 'lighter';
 
-      for (let x = 0; x <= w; x += 3) {
-        const y =
-          midY +
-          amplitude * Math.sin((x / w) * Math.PI * frequency + phaseShift + t);
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      // Thicker beams, lower opacity — big atmospheric bloom
+      const layers = [
+        { width: 5000, blur: 0, alpha: 0.008 * opacityFactor }, // ultra-wide environmental wash
+        { width: 3200, blur: 0, alpha: 0.013 * opacityFactor }, // broad soft halo
+        { width: 1800, blur: 0, alpha: 0.022 * opacityFactor }, // thick glowing ribbon
+        { width: 900,  blur: 0, alpha: 0.040 * opacityFactor }, // inner soft band
+        { width: 280,  blur: 0, alpha: 0.09  * opacityFactor }, // bright band
+        { width: 60,   blur: 0, alpha: 0.18  * opacityFactor }, // core line
+        { width: 4,    blur: 0, alpha: 0.55  * opacityFactor }, // sharp bright edge
+      ];
+
+      for (const layer of layers) {
+        buildPath();
+        ctx.strokeStyle = getGradient(layer.alpha);
+        ctx.lineWidth = layer.width;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.stroke();
       }
 
-      ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
-      ctx.lineWidth = lineWidth;
-      ctx.stroke();
       ctx.restore();
     };
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const h = canvas.height;
 
-      // Layer 1 — thick soft glow (very transparent)
-      drawWave(90, 2.5, 0, 120, 0.018, 55);
-      // Layer 2 — medium wave
-      drawWave(70, 3.0, Math.PI * 0.4, 60, 0.025, 30);
-      // Layer 3 — crisp bright line
-      drawWave(55, 3.5, Math.PI * 0.8, 2, 0.12, 0);
-      // Layer 4 — second crisp line (offset phase)
-      drawWave(40, 2.8, Math.PI * 1.4, 1, 0.06, 0);
+      // Two wide beams of light gliding through the background
+      drawGlowWave(h * 0.35, 120, 1.2, 0,            1.0);
+      drawGlowWave(h * 0.65, 90,  1.8, Math.PI * 0.6, 0.7);
 
-      t += 0.004; // very slow drift
+      t += 0.0025; // slow, atmospheric glide
       animId = requestAnimationFrame(draw);
     };
 
@@ -132,6 +171,7 @@ const WaveLight = () => {
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -140,7 +180,7 @@ const WaveLight = () => {
       ref={canvasRef}
       aria-hidden="true"
       className="fixed inset-0 pointer-events-none"
-      style={{ zIndex: 1 }}
+      style={{ zIndex: 1, width: '100%', height: '100%', opacity: 1.0 }}
     />
   );
 };
@@ -343,8 +383,8 @@ const Hero = () => {
   return (
     <section id="about" ref={ref} className="min-h-screen relative flex items-center overflow-hidden pt-24">
       {/* Background */}
-      <div className="absolute inset-0 dot-grid opacity-40" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80" />
+      <div className="absolute inset-0 dot-grid opacity-30" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-base-950/40" />
 
       {/* Animated orbs */}
       <motion.div
