@@ -81,31 +81,49 @@ const WaveLight = () => {
     window.addEventListener('resize', resize);
 
     /**
-     * Organic wave y-position built from 4 sine components with
-     * irrational frequency/speed ratios — they never phase-align so
-     * the shape never visibly repeats.
+     * Each wave has two independent endpoint oscillators:
+     *   yLeft  — where the wave sits at x = 0  (left edge)
+     *   yRight — where the wave sits at x = w  (right edge)
      *
-     *  component 1: primary slow roll          (speed ×1.00, freq ×1.00)
-     *  component 2: secondary mid churn        (speed ×1.61, freq ×1.73)  ← golden-ratio-ish
-     *  component 3: fast ripple detail         (speed ×2.71, freq ×3.14)  ← e and π
-     *  component 4: ultra-slow vertical drift  (speed ×0.37, no spatial freq)
+     * They run at different irrational speeds so they never sync.
+     * The wave baseline is a linear interpolation between them,
+     * making the line always tilted at a different angle.
+     * When yRight drifts to a new height the next yLeft picks up
+     * from wherever yLeft currently is → "ends and starts again
+     * from that point" naturally emerges from the continuous math.
+     *
+     * On top of that tilted baseline, three organic sine components
+     * (irrational freq ratios) add the wave ripple detail.
      */
-    const organicY = (x: number, w: number, midY: number, amp: number, baseFreq: number) => {
-      const xn = (x / w) * Math.PI * 2;
-      return (
-        midY
-        + amp * 0.55 * Math.sin(xn * baseFreq        + t * 1.00)
-        + amp * 0.25 * Math.sin(xn * baseFreq * 1.73 + t * 1.61)
-        + amp * 0.12 * Math.sin(xn * baseFreq * 3.14 + t * 2.71)
-        + amp * 0.08 * Math.sin(                       t * 0.37)  // vertical breathe
-      );
+    const organicY = (
+      x: number, w: number, midY: number,
+      amp: number, baseFreq: number,
+      plL: number, plR: number,   // phase offsets for left / right endpoint oscillators
+    ) => {
+      const xn = x / w;  // 0 → 1
+
+      // Left and right endpoints drift at different irrational speeds
+      const driftRange = amp * 1.1;
+      const yLeft  = midY + driftRange * Math.sin(t * 0.031 + plL);
+      const yRight = midY + driftRange * Math.sin(t * 0.054 + plR);
+
+      // Tilted baseline: linear interp from left endpoint to right endpoint
+      const baseline = yLeft + (yRight - yLeft) * xn;
+
+      // Organic ripple on top (irrational freq multiples → never repeats)
+      const ripple =
+          amp * 0.40 * Math.sin(xn * Math.PI * 2 * baseFreq        + t * 1.00)
+        + amp * 0.20 * Math.sin(xn * Math.PI * 2 * baseFreq * 1.73 + t * 1.61)
+        + amp * 0.10 * Math.sin(xn * Math.PI * 2 * baseFreq * 3.14 + t * 2.71);
+
+      return baseline + ripple;
     };
 
-    const tracePath = (midY: number, amp: number, freq: number) => {
+    const tracePath = (midY: number, amp: number, freq: number, plL: number, plR: number) => {
       const w = canvas.width;
       ctx.beginPath();
       for (let x = 0; x <= w; x += 2) {
-        const y = organicY(x, w, midY, amp, freq);
+        const y = organicY(x, w, midY, amp, freq, plL, plR);
         x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
     };
@@ -120,9 +138,12 @@ const WaveLight = () => {
       return g;
     };
 
-    const drawWave = (midY: number, amp: number, freq: number, brightness: number) => {
+    const drawWave = (
+      midY: number, amp: number, freq: number,
+      plL: number, plR: number, brightness: number,
+    ) => {
       // Pass 1 — wide atmospheric halo
-      tracePath(midY, amp, freq);
+      tracePath(midY, amp, freq, plL, plR);
       ctx.save();
       ctx.shadowColor = `rgba(255,255,255,${0.55 * brightness})`;
       ctx.shadowBlur  = 90;
@@ -133,7 +154,7 @@ const WaveLight = () => {
       ctx.restore();
 
       // Pass 2 — tight inner glow
-      tracePath(midY, amp, freq);
+      tracePath(midY, amp, freq, plL, plR);
       ctx.save();
       ctx.shadowColor = `rgba(255,255,255,${0.70 * brightness})`;
       ctx.shadowBlur  = 24;
@@ -144,7 +165,7 @@ const WaveLight = () => {
       ctx.restore();
 
       // Pass 3 — sharp bright centerline
-      tracePath(midY, amp, freq);
+      tracePath(midY, amp, freq, plL, plR);
       ctx.shadowColor = `rgba(255,255,255,${0.90 * brightness})`;
       ctx.shadowBlur  = 6;
       ctx.strokeStyle = edgeGradient(0.70 * brightness);
@@ -158,11 +179,10 @@ const WaveLight = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const h = canvas.height;
 
-      drawWave(h * 0.38, 85, 1.4, 1.0);   // primary — upper
-      drawWave(h * 0.65, 65, 1.9, 0.55);  // secondary — lower, dimmer
+      // Each wave gets unique left/right phase offsets → independent endpoint drift
+      drawWave(h * 0.38, 85, 1.4, 0.00, 2.39, 1.0);   // primary — upper
+      drawWave(h * 0.65, 65, 1.9, 1.57, 4.71, 0.55);  // secondary — lower, dimmer
 
-      // Each component advances at its own irrational rate so the
-      // combined shape morphs continuously without ever looping.
       t += 0.014;
       animId = requestAnimationFrame(draw);
     };
