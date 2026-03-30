@@ -81,83 +81,89 @@ const WaveLight = () => {
     window.addEventListener('resize', resize);
 
     /**
-     * Builds a smooth sine-wave path sampled every 2 px.
-     * Using lineTo at 2 px steps gives a perfectly smooth curve
-     * with zero jagginess.
+     * Organic wave y-position built from 4 sine components with
+     * irrational frequency/speed ratios — they never phase-align so
+     * the shape never visibly repeats.
+     *
+     *  component 1: primary slow roll          (speed ×1.00, freq ×1.00)
+     *  component 2: secondary mid churn        (speed ×1.61, freq ×1.73)  ← golden-ratio-ish
+     *  component 3: fast ripple detail         (speed ×2.71, freq ×3.14)  ← e and π
+     *  component 4: ultra-slow vertical drift  (speed ×0.37, no spatial freq)
      */
-    const tracePath = (midY: number, amp: number, freq: number, phase: number) => {
+    const organicY = (x: number, w: number, midY: number, amp: number, baseFreq: number) => {
+      const xn = (x / w) * Math.PI * 2;
+      return (
+        midY
+        + amp * 0.55 * Math.sin(xn * baseFreq        + t * 1.00)
+        + amp * 0.25 * Math.sin(xn * baseFreq * 1.73 + t * 1.61)
+        + amp * 0.12 * Math.sin(xn * baseFreq * 3.14 + t * 2.71)
+        + amp * 0.08 * Math.sin(                       t * 0.37)  // vertical breathe
+      );
+    };
+
+    const tracePath = (midY: number, amp: number, freq: number) => {
       const w = canvas.width;
       ctx.beginPath();
       for (let x = 0; x <= w; x += 2) {
-        const y = midY + amp * Math.sin((x / w) * Math.PI * 2 * freq + phase + t);
+        const y = organicY(x, w, midY, amp, freq);
         x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
     };
 
-    /**
-     * Horizontal gradient that fades to transparent at both edges —
-     * keeps the wave from hard-stopping at the viewport boundary.
-     */
     const edgeGradient = (alpha: number) => {
       const g = ctx.createLinearGradient(0, 0, canvas.width, 0);
       g.addColorStop(0,    `rgba(255,255,255,0)`);
-      g.addColorStop(0.12, `rgba(255,255,255,${alpha})`);
+      g.addColorStop(0.10, `rgba(255,255,255,${alpha})`);
       g.addColorStop(0.50, `rgba(255,255,255,${alpha})`);
-      g.addColorStop(0.88, `rgba(255,255,255,${alpha})`);
+      g.addColorStop(0.90, `rgba(255,255,255,${alpha})`);
       g.addColorStop(1,    `rgba(255,255,255,0)`);
       return g;
     };
 
-    /**
-     * Draws one wave with 3 passes:
-     *   1. Wide soft halo  — shadowBlur 60, lineWidth 28, low alpha
-     *   2. Inner glow band — shadowBlur 18, lineWidth 8,  mid alpha
-     *   3. Sharp centerline — no shadow,   lineWidth 1.5, high alpha
-     *
-     * shadowBlur is GPU-composited by the browser — far cheaper than
-     * painting giant lineWidth strokes frame after frame.
-     */
-    const drawWave = (midY: number, amp: number, freq: number, phase: number, brightness: number) => {
-      // — Pass 1: wide halo —
-      tracePath(midY, amp, freq, phase);
+    const drawWave = (midY: number, amp: number, freq: number, brightness: number) => {
+      // Pass 1 — wide atmospheric halo
+      tracePath(midY, amp, freq);
       ctx.save();
-      ctx.shadowColor = `rgba(255,255,255,${0.18 * brightness})`;
-      ctx.shadowBlur  = 60;
-      ctx.strokeStyle = edgeGradient(0.06 * brightness);
-      ctx.lineWidth   = 28;
+      ctx.shadowColor = `rgba(255,255,255,${0.55 * brightness})`;
+      ctx.shadowBlur  = 90;
+      ctx.strokeStyle = edgeGradient(0.10 * brightness);
+      ctx.lineWidth   = 38;
       ctx.lineJoin    = 'round';
       ctx.stroke();
       ctx.restore();
 
-      // — Pass 2: inner glow —
-      tracePath(midY, amp, freq, phase);
+      // Pass 2 — tight inner glow
+      tracePath(midY, amp, freq);
       ctx.save();
-      ctx.shadowColor = `rgba(255,255,255,${0.30 * brightness})`;
-      ctx.shadowBlur  = 18;
-      ctx.strokeStyle = edgeGradient(0.14 * brightness);
-      ctx.lineWidth   = 8;
+      ctx.shadowColor = `rgba(255,255,255,${0.70 * brightness})`;
+      ctx.shadowBlur  = 24;
+      ctx.strokeStyle = edgeGradient(0.22 * brightness);
+      ctx.lineWidth   = 9;
       ctx.lineJoin    = 'round';
       ctx.stroke();
       ctx.restore();
 
-      // — Pass 3: sharp centerline —
-      tracePath(midY, amp, freq, phase);
-      ctx.strokeStyle = edgeGradient(0.45 * brightness);
+      // Pass 3 — sharp bright centerline
+      tracePath(midY, amp, freq);
+      ctx.shadowColor = `rgba(255,255,255,${0.90 * brightness})`;
+      ctx.shadowBlur  = 6;
+      ctx.strokeStyle = edgeGradient(0.70 * brightness);
       ctx.lineWidth   = 1.5;
       ctx.lineJoin    = 'round';
       ctx.stroke();
+      ctx.shadowBlur  = 0;
     };
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const h = canvas.height;
 
-      // Primary wave — upper half
-      drawWave(h * 0.38, 80, 1.4, 0,              1.0);
-      // Secondary wave — lower half, different speed feel via phase offset
-      drawWave(h * 0.64, 60, 1.8, Math.PI * 0.55, 0.6);
+      drawWave(h * 0.38, 85, 1.4, 1.0);   // primary — upper
+      drawWave(h * 0.65, 65, 1.9, 0.55);  // secondary — lower, dimmer
 
-      t += 0.018; // fast enough to look like flowing water, slow enough to stay elegant
+      // Each component advances at its own irrational rate so the
+      // combined shape morphs continuously without ever looping.
+      t += 0.014;
       animId = requestAnimationFrame(draw);
     };
 
