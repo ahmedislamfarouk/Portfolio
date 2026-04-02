@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# CV files
+Ahmed_Badr_CV*
+cv_page*.png
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -22,7 +26,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-Ahmed_Badr_CV.pdf
 
 # AI Assistant settings
 .qwen/

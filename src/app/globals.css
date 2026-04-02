@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-base-950 text-accent-primary font-body;
+    overflow-x: hidden;
+    letter-spacing: -0.01em;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-heading font-black tracking-ultra leading-ultra uppercase;
+  }
+}
+
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    @apply px-8 py-4 bg-white text-black font-bold uppercase tracking-widest text-xs rounded-full transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-2;
+  }
+
+  .btn-ghost {
+    @apply px-8 py-4 border border-white/15 text-white font-bold uppercase tracking-widest text-xs rounded-full transition-all duration-300 hover:border-white/40 hover:bg-white/5 inline-flex items-center gap-2;
+  }
+
+  /* Card base */
+  .card {
+    @apply bg-base-900 border border-white/[0.06] rounded-2xl overflow-hidden;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .card:hover {
+    @apply border-white/15;
+  }
+
+  /* Glow card */
+  .card-glow:hover {
+    box-shadow: 0 0 40px -10px rgba(6, 182, 212, 0.15);
+  }
+
+  /* Status dot */
+  .status-dot {
+    @apply w-2 h-2 rounded-full bg-accent-cyan relative inline-block;
+  }
+
+  .status-dot::after {
+    content: '';
+    @apply absolute inset-0 rounded-full bg-accent-cyan animate-ping opacity-60;
+  }
+
+  /* Section label */
+  .section-label {
+    @apply text-[10px] font-bold uppercase tracking-[0.4em] text-white/30 flex items-center gap-3;
+  }
+
+  .section-label::before {
+    content: '';
+    @apply block w-8 h-px bg-white/20;
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    background: linear-gradient(135deg, #06B6D4 0%, #2563EB 50%, #7C3AED 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Dot grid background */
+  .dot-grid {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Scan line overlay */
+  .scanlines::before {
+    content: '';
+    @apply absolute inset-0 pointer-events-none z-10;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+  }
+
+  /* Tag pill */
+  .tag {
+    @apply px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-white/50;
+  }
+
+  /* Cursor blink */
+  .cursor {
+    @apply inline-block w-0.5 h-[1em] bg-accent-cyan ml-1 align-middle;
+    animation: cursor-blink 1s ease-in-out infinite;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .tracking-ultra { letter-spacing: -0.07em; }
+  .leading-ultra { line-height: 0.82; }
+
+  /* Shimmer animation */
+  .shimmer-text {
+    background: linear-gradient(90deg, #ffffff 0%, #06B6D4 40%, #ffffff 60%, #06B6D4 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+  }
+}
+
+::selection {
+  background: rgba(6, 182, 212, 0.3);
+  color: #ffffff;
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: #27272A; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
