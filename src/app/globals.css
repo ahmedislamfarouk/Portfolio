@@ -1,7 +1,55 @@
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --font-heading: "Archivo", sans-serif;
+  --font-body: "Space Grotesk", sans-serif;
+
+  /* OLED Dark Palette */
+  --color-base-950: #000000;
+  --color-base-900: #0A0A0A;
+  --color-base-800: #141414;
+  --color-base-700: #1F1F1F;
+
+  --color-accent-primary: #FFFFFF;
+  --color-accent-muted: #71717A;
+  --color-accent-subtle: #27272A;
+  --color-accent-cyan: #06B6D4;
+  --color-accent-blue: #2563EB;
+  --color-accent-cyan-dim: #0891B2;
+
+  --radius-bento: 2rem;
+  --radius-inner: 1rem;
+
+  @keyframes reveal {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  @keyframes scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
+  }
+
+  @keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  --animate-reveal: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 3s linear infinite;
+}
 
 @layer base {
   :root {
@@ -12,14 +60,20 @@
   }
 
   body {
-    @apply bg-base-950 text-accent-primary font-body;
+    background-color: var(--color-base-950);
+    color: var(--color-accent-primary);
+    font-family: var(--font-body);
     overflow-x: hidden;
     letter-spacing: -0.01em;
     line-height: 1.6;
   }
 
   h1, h2, h3, h4 {
-    @apply font-heading font-black tracking-ultra leading-ultra uppercase;
+    font-family: var(--font-heading);
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    text-transform: uppercase;
   }
 }
 

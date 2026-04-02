@@ -76,7 +76,11 @@ const WaveLight = () => {
       ctx.beginPath();
       for (let x = 0; x <= w; x += 2) {
         const y = organicY(x, w, midY, amp, freq, plL, plR);
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        if (x === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
       }
     };
 

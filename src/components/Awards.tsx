@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Trophy, Medal, Award, Star } from 'lucide-react';
+import React from 'react';
 
 const awards = [
   {
@@ -48,7 +49,7 @@ const awards = [
   },
 ];
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   trophy: Trophy,
   medal: Medal,
   award: Award,
@@ -109,8 +110,8 @@ const Awards = () => {
                 className="card p-6 card-glow group"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-cyan/20 to-accent-blue/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <IconComponent size={24} className="text-accent-cyan" />
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-cyan/20 to-accent-blue/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 text-accent-cyan">
+                    <IconComponent size={24} />
                   </div>
                   <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">{award.year}</span>
                 </div>
