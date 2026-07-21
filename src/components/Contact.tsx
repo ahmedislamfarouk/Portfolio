@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Send, ArrowUpRight, Sparkles } from 'lucide-react';
+import SplitText from '@/components/SplitText';
 
 // ── Custom Social Icons (preserved from original) ─────────────
 
@@ -185,9 +186,14 @@ const Contact = () => {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mb-16 md:mb-20"
         >
-          <span className="section-label">Get in Touch</span>
+          <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Get in Touch</SplitText>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
-            Let&apos;s <span className="text-gradient">Connect</span>
+            <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
+              Let&apos;s
+            </SplitText>{' '}
+            <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
+              Connect
+            </SplitText>
           </h2>
         </motion.div>
 

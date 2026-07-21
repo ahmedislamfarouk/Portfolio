@@ -1,14 +1,11 @@
 'use client';
 
-import {
-  motion,
-  AnimatePresence,
-  useMotionValue,
-  useTransform,
-} from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight, X, ExternalLink } from 'lucide-react';
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { projects, type Project } from '@/data/projects';
+import { useTiltEffect } from '@/hooks/useTiltEffect';
+import SplitText from '@/components/SplitText';
 
 /* ─────────────────────────────────────────────────────────────
    Constants
@@ -158,22 +155,10 @@ const ProjectCard = ({
   featured?: boolean;
   onClick: () => void;
 }) => {
-  const mouseX = useMotionValue(0.5);
-  const mouseY = useMotionValue(0.5);
-
-  const rotateX = useTransform(mouseY, [0, 1], [5, -5]);
-  const rotateY = useTransform(mouseX, [0, 1], [-5, 5]);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    mouseX.set((e.clientX - rect.left) / rect.width);
-    mouseY.set((e.clientY - rect.top) / rect.height);
-  }, [mouseX, mouseY]);
-
-  const handleMouseLeave = useCallback(() => {
-    mouseX.set(0.5);
-    mouseY.set(0.5);
-  }, [mouseX, mouseY]);
+  const { ref, onMouseMove, onMouseLeave, style } = useTiltEffect<HTMLDivElement>({
+    scale: 1.02,
+    rotation: 10,
+  });
 
   const statusStyle = STATUS_STYLES[project.status];
 
@@ -195,15 +180,10 @@ const ProjectCard = ({
       aria-label={`View project: ${project.title}`}
     >
       <motion.div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          rotateX,
-          rotateY,
-          transformStyle: 'preserve-3d',
-          perspective: 800,
-        }}
-        transition={{ type: 'spring', stiffness: 250, damping: 25 }}
+        ref={ref}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        style={style}
         className={`bento-card group relative cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan ${
           featured ? 'aspect-[16/9]' : 'aspect-square'
         }`}
@@ -661,9 +641,14 @@ const Projects = () => {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mb-10"
         >
-          <span className="section-label">Portfolio</span>
+          <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Portfolio</SplitText>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
-            Featured <span className="text-gradient">Projects</span>
+            <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
+              Featured
+            </SplitText>{' '}
+            <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
+              Projects
+            </SplitText>
           </h2>
           <p className="text-white/25 text-sm md:text-base mt-4 max-w-lg leading-relaxed">
             Research-driven AI, robotics, and NLP systems — from conception

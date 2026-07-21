@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
 import { achievementStats } from '@/data/stats';
+import SplitText from '@/components/SplitText';
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -347,10 +348,14 @@ const BeyondTheLab = () => {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mb-16 md:mb-20"
         >
-          <span className="section-label">Discipline</span>
+          <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Discipline</SplitText>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
-            Beyond{' '}
-            <span className="text-gradient-cyan-violet">the Lab</span>
+            <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
+              Beyond
+            </SplitText>{' '}
+            <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient-cyan-violet">
+              the Lab
+            </SplitText>
           </h2>
         </motion.div>
 

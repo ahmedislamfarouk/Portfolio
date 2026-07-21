@@ -3,6 +3,8 @@
 import { motion, useInView } from 'framer-motion';
 import { Trophy, Medal, Award, Star, Sparkles } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
+import { useTiltEffect } from '@/hooks/useTiltEffect';
+import SplitText from '@/components/SplitText';
 
 // ── Animated Counter — counts up when element enters viewport ──
 const useCountUp = (end: number, duration = 2200) => {
@@ -255,6 +257,10 @@ const AwardCard = ({
   const levelStyle = levelStyles[award.level];
   const gradient = iconGradients[award.icon] || iconGradients.trophy;
   const iconColor = iconColors[award.icon] || iconColors.trophy;
+  const { ref, onMouseMove, onMouseLeave, style } = useTiltEffect<HTMLDivElement>({
+    scale: 1,
+    rotation: 6,
+  });
 
   return (
     <motion.article
@@ -268,7 +274,13 @@ const AwardCard = ({
       }}
       className="group cursor-pointer"
     >
-      <div className="bento-card relative overflow-hidden h-full p-6 md:p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_-8px_rgba(6,182,212,0.15)]">
+      <motion.div
+        ref={ref}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        style={style}
+        className="bento-card relative overflow-hidden h-full p-6 md:p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_-8px_rgba(6,182,212,0.15)]"
+      >
         <AnimatedCardBorder />
 
         {/* Glow overlay on hover */}
@@ -327,7 +339,7 @@ const AwardCard = ({
 
         {/* Bottom neon accent line on hover */}
         <div className="absolute bottom-0 left-[10%] right-[10%] h-[2px] rounded-full bg-gradient-to-r from-transparent via-neon-cyan/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 scale-x-0 group-hover:scale-x-100 origin-center" />
-      </div>
+      </motion.div>
     </motion.article>
   );
 };
@@ -356,9 +368,14 @@ const Awards = () => {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mb-16 md:mb-20"
         >
-          <span className="section-label">Recognition</span>
+          <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Recognition</SplitText>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
-            Awards & <span className="text-gradient">Honors</span>
+            <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
+              Awards &amp;
+            </SplitText>{' '}
+            <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
+              Honors
+            </SplitText>
           </h2>
         </motion.div>
 

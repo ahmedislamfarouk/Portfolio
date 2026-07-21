@@ -7,6 +7,7 @@ import {
   useReducedMotion,
 } from 'framer-motion';
 import { useRef } from 'react';
+import { useTiltEffect } from '@/hooks/useTiltEffect';
 import type { Easing } from 'framer-motion';
 import {
   Brain,
@@ -19,6 +20,7 @@ import {
 } from 'lucide-react';
 import { timeline } from '@/data/timeline';
 import type { TimelineEntry } from '@/data/timeline';
+import SplitText from '@/components/SplitText';
 
 /* ------------------------------------------------------------------ */
 /*  Shared easing                                                      */
@@ -185,6 +187,16 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
   const IconComponent = entry.icon ? ICON_MAP[entry.icon] : Code2;
   const cardRef = useRef<HTMLDivElement>(null);
 
+  const {
+    ref: glassRef,
+    onMouseMove: glassMouseMove,
+    onMouseLeave: glassMouseLeave,
+    style: glassStyle,
+  } = useTiltEffect<HTMLDivElement>({
+    scale: 1,
+    rotation: 3,
+  });
+
   return (
     <motion.div
       variants={containerVariants}
@@ -284,7 +296,13 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
         </div>
 
         {/* Glass card with neon left-border accent */}
-        <div className="glass-card group/card relative overflow-hidden transition-all duration-300 hover:-translate-y-0.5">
+        <motion.div
+          ref={glassRef}
+          onMouseMove={glassMouseMove}
+          onMouseLeave={glassMouseLeave}
+          style={glassStyle}
+          className="glass-card group/card relative overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
+        >
           {/* Neon left-border accent */}
           <span
             className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full transition-all duration-300 group-hover/card:top-0.5 group-hover/card:bottom-0.5"
@@ -386,7 +404,7 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       </motion.div>
     </motion.div>
   );
@@ -475,9 +493,14 @@ const ResearchTimeline = () => {
           transition={{ duration: 0.6, ease: EASE_OUT_QUART }}
           className="mb-16 md:mb-20"
         >
-          <span className="section-label">Timeline</span>
+          <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Timeline</SplitText>
           <h2 className="mt-6 text-4xl font-black uppercase tracking-ultra md:text-6xl">
-            Research <span className="text-gradient">Journey</span>
+            <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
+              Research
+            </SplitText>{' '}
+            <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
+              Journey
+            </SplitText>
           </h2>
           <p className="mt-4 max-w-xl text-sm md:text-base text-white/30 font-medium tracking-wide leading-relaxed">
             From academic foundations to cutting-edge research — a chronology of

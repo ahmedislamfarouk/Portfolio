@@ -2,6 +2,7 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
+import { useTiltEffect } from '@/hooks/useTiltEffect';
 import {
   Eye,
   Layers,
@@ -12,6 +13,7 @@ import {
   GraduationCap,
   Users,
 } from 'lucide-react';
+import SplitText from '@/components/SplitText';
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -129,6 +131,74 @@ const AnimatedBorder = () => (
   </div>
 );
 
+// ─── Research Area Card ─────────────────────────────────────────────────
+
+const ResearchAreaCard = ({ area, index }: { area: ResearchArea; index: number }) => {
+  const Icon = area.icon;
+  const { ref, onMouseMove, onMouseLeave, style } = useTiltEffect<HTMLDivElement>({
+    scale: 1,
+    rotation: 5,
+  });
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={style}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{
+        delay: index * 0.1,
+        duration: 0.6,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      className="bento-card group relative"
+    >
+      {/* Animated gradient border on hover */}
+      <AnimatedBorder />
+
+      {/* Inner glow overlay on hover */}
+      <div
+        className="absolute inset-0 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-[1]"
+        aria-hidden
+        style={{
+          background: `linear-gradient(135deg, ${area.accent}08, transparent 60%, ${area.accent}04)`,
+          boxShadow: `inset 0 0 40px -12px ${area.accent}18`,
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 p-8 flex items-start gap-6">
+        {/* Icon with larger container */}
+        <div
+          className="w-16 h-16 min-w-[4rem] rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:-rotate-[3deg]"
+          style={{
+            background: `linear-gradient(135deg, ${area.accent}18, ${area.accent}06)`,
+            border: `1px solid ${area.accent}25`,
+            color: area.accent,
+          }}
+        >
+          <Icon
+            size={30}
+            className="drop-shadow-lg transition-all duration-300"
+          />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <h3 className="text-xl font-black uppercase tracking-ultra text-white mb-3 group-hover:text-gradient transition-all duration-300">
+            {area.title}
+          </h3>
+          <p className="text-white/50 text-base leading-relaxed group-hover:text-white/60 transition-colors duration-300">
+            {area.description}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 // ─── Stat Card ──────────────────────────────────────────────────────────
 
 const ResearchStatCard = ({
@@ -140,9 +210,17 @@ const ResearchStatCard = ({
 }) => {
   const { count, ref } = useAnimatedCounter(stat.target);
   const Icon = stat.icon;
+  const { ref: tiltRef, onMouseMove, onMouseLeave, style } = useTiltEffect<HTMLDivElement>({
+    scale: 1,
+    rotation: 5,
+  });
 
   return (
     <motion.div
+      ref={tiltRef}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={style}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -242,71 +320,22 @@ const Labs = () => {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mb-16"
         >
-          <span className="section-label">Research Areas</span>
+          <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Research Areas</SplitText>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
-            Research <span className="text-gradient">Labs</span>
+            <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
+              Research
+            </SplitText>{' '}
+            <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
+              Labs
+            </SplitText>
           </h2>
         </motion.div>
 
         {/* ── Bento Grid: Research Areas ─────────────────────────── */}
         <div className="grid md:grid-cols-2 gap-6">
-          {researchAreas.map((area, index) => {
-            const Icon = area.icon;
-            return (
-              <motion.div
-                key={area.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{
-                  delay: index * 0.1,
-                  duration: 0.6,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="bento-card group relative"
-              >
-                {/* Animated gradient border on hover */}
-                <AnimatedBorder />
-
-                {/* Inner glow overlay on hover */}
-                <div
-                  className="absolute inset-0 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-[1]"
-                  aria-hidden
-                  style={{
-                    background: `linear-gradient(135deg, ${area.accent}08, transparent 60%, ${area.accent}04)`,
-                    boxShadow: `inset 0 0 40px -12px ${area.accent}18`,
-                  }}
-                />
-
-                {/* Content */}
-                <div className="relative z-10 p-8 flex items-start gap-6">
-                  {/* Icon with larger container */}
-                  <div
-                    className="w-16 h-16 min-w-[4rem] rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:-rotate-[3deg]"
-                    style={{
-                      background: `linear-gradient(135deg, ${area.accent}18, ${area.accent}06)`,
-                      border: `1px solid ${area.accent}25`,
-                      color: area.accent,
-                    }}
-                  >
-                    <Icon
-                      size={30}
-                      className="drop-shadow-lg transition-all duration-300"
-                    />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-xl font-black uppercase tracking-ultra text-white mb-3 group-hover:text-gradient transition-all duration-300">
-                      {area.title}
-                    </h3>
-                    <p className="text-white/50 text-base leading-relaxed group-hover:text-white/60 transition-colors duration-300">
-                      {area.description}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+          {researchAreas.map((area, index) => (
+            <ResearchAreaCard key={area.title} area={area} index={index} />
+          ))}
         </div>
 
         {/* ── Research Stats Grid ────────────────────────────────── */}
