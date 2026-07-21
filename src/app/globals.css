@@ -1,11 +1,22 @@
+/* ============================================================
+   Ahmed Badr Portfolio — Global Design System
+   Cyberpunk UI · Dark Mode (OLED) · Glassmorphism · Neon Accents
+   TailwindCSS v4 · Next.js 15
+   ============================================================ */
+
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* ─── Dark Mode Variant ────────────────────────────────────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Theme Tokens ─────────────────────────────────────────── */
 @theme {
+  /* Fonts */
   --font-heading: "Archivo", sans-serif;
   --font-body: "Space Grotesk", sans-serif;
 
-  /* OLED Dark Palette */
+  /* ── OLED Dark Palette ─────────────────────────────────── */
   --color-base-950: #000000;
   --color-base-900: #0A0A0A;
   --color-base-800: #141414;
@@ -18,45 +29,116 @@
   --color-accent-blue: #2563EB;
   --color-accent-cyan-dim: #0891B2;
 
+  /* ── Neon Accent Colors ────────────────────────────────── */
+  --color-neon-cyan: #06B6D4;
+  --color-neon-violet: #7C3AED;
+  --color-neon-blue: #2563EB;
+  --color-neon-pink: #EC4899;
+  --color-neon-green: #10B981;
+
+  /* ── Glass Tokens ──────────────────────────────────────── */
+  --color-glass-border: rgba(255, 255, 255, 0.06);
+  --color-glass-bg: rgba(255, 255, 255, 0.03);
+
+  /* ── Neon Box-Shadow Tokens ────────────────────────────── */
+  --shadow-neon-cyan: 0 0 20px rgba(6, 182, 212, 0.3), 0 0 40px rgba(6, 182, 212, 0.1);
+  --shadow-neon-violet: 0 0 20px rgba(124, 58, 237, 0.3), 0 0 40px rgba(124, 58, 237, 0.1);
+  --shadow-neon-blue: 0 0 20px rgba(37, 99, 235, 0.3), 0 0 40px rgba(37, 99, 235, 0.1);
+
+  /* ── Radii ─────────────────────────────────────────────── */
   --radius-bento: 2rem;
   --radius-inner: 1rem;
 
+  /* ═══════════════════════════════════════════════════════════
+     Keyframe Animations
+     ═══════════════════════════════════════════════════════════ */
+
+  /* Reveal — scroll-triggered fade + slide up */
   @keyframes reveal {
     from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* Float — gentle levitation for decorative elements */
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-12px); }
+    50%      { transform: translateY(-12px); }
   }
 
+  /* Shimmer — sweeping gradient for text/background shine */
   @keyframes shimmer {
-    0% { background-position: -200% center; }
+    0%   { background-position: -200% center; }
     100% { background-position: 200% center; }
   }
 
+  /* Scan — vertical scan-line sweep (decorative overlay) */
   @keyframes scan {
-    0% { transform: translateY(-100%); }
+    0%   { transform: translateY(-100%); }
     100% { transform: translateY(100vh); }
   }
 
+  /* Cursor blink — typing cursor */
   @keyframes cursor-blink {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+    50%      { opacity: 0; }
   }
 
-  --animate-reveal: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-shimmer: shimmer 3s linear infinite;
+  /* Glitch — subtle translate/skew glitch */
+  @keyframes glitch {
+    0%, 100% { transform: translate(0); }
+    20%      { transform: translate(-2px, 2px) skewX(-1deg); }
+    40%      { transform: translate(2px, -1px) skewX(1deg); }
+    60%      { transform: translate(-1px, 1px) skewX(-0.5deg); }
+    80%      { transform: translate(1px, -2px) skewX(0.5deg); }
+  }
+
+  /* Pulse-glow — pulsating neon glow for active elements */
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); }
+    50%      { box-shadow: 0 0 40px rgba(6, 182, 212, 0.6), 0 0 60px rgba(6, 182, 212, 0.15); }
+  }
+
+  /* Spin-slow — slow rotation for decorative rings/spinners */
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* Border-dance — animated border segments for neon-border */
+  @keyframes border-dance {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ── Animation Utility Mappings ─────────────────────────── */
+  --animate-reveal:     reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-float:      float 6s ease-in-out infinite;
+  --animate-shimmer:    shimmer 3s linear infinite;
+  --animate-scan:       scan 8s linear infinite;
+  --animate-typing:     cursor-blink 1s ease-in-out infinite;
+  --animate-glitch:     glitch 0.3s ease-in-out;
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+  --animate-spin-slow:  spin-slow 8s linear infinite;
 }
 
+/* ═════════════════════════════════════════════════════════════
+   BASE LAYER
+   ═════════════════════════════════════════════════════════════ */
 @layer base {
   :root {
     color-scheme: dark;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
+
+    /* Improve text rendering on OLED */
+    text-rendering: optimizeLegibility;
+  }
+
+  html {
+    font-family: var(--font-body);
+    font-display: swap; /* equivalent to Google Fonts &display=swap */
   }
 
   body {
@@ -75,54 +157,161 @@
     line-height: 0.9;
     text-transform: uppercase;
   }
+
+  /* Smooth focus-visible ring for keyboard nav */
+  :focus-visible {
+    outline: 2px solid var(--color-neon-cyan);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 }
 
+/* ═════════════════════════════════════════════════════════════
+   COMPONENT LAYER
+   ═════════════════════════════════════════════════════════════ */
 @layer components {
-  /* Buttons */
+
+  /* ── Buttons ───────────────────────────────────────────── */
+
+  /* Primary CTA — white pill with neon glow on hover */
   .btn-primary {
     @apply px-8 py-4 bg-white text-black font-bold uppercase tracking-widest text-xs rounded-full transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-2;
   }
-
-  .btn-ghost {
-    @apply px-8 py-4 border border-white/15 text-white font-bold uppercase tracking-widest text-xs rounded-full transition-all duration-300 hover:border-white/40 hover:bg-white/5 inline-flex items-center gap-2;
+  .btn-primary:hover {
+    box-shadow: var(--shadow-neon-cyan);
   }
 
-  /* Card base */
+  /* Ghost button — minimal border with hover fill */
+  .btn-ghost {
+    @apply px-8 py-4 border border-white/15 text-white font-bold uppercase tracking-widest text-xs rounded-full transition-all duration-300 inline-flex items-center gap-2;
+  }
+  .btn-ghost:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.06);
+  }
+
+  /* Icon button — square icon container */
+  .btn-icon {
+    @apply w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 cursor-pointer;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-accent-muted);
+  }
+  .btn-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(6, 182, 212, 0.3);
+    color: var(--color-neon-cyan);
+    box-shadow: 0 0 16px rgba(6, 182, 212, 0.12);
+  }
+
+  /* ── Cards ─────────────────────────────────────────────── */
+
+  /* Base card */
   .card {
     @apply bg-base-900 border border-white/[0.06] rounded-2xl overflow-hidden;
-    transition: border-color 0.3s ease, transform 0.3s ease;
+    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
   }
-
   .card:hover {
-    @apply border-white/15;
+    border-color: rgba(255, 255, 255, 0.15);
   }
 
-  /* Glow card */
+  /* Card glow — subtle cyan halo on hover */
   .card-glow:hover {
     box-shadow: 0 0 40px -10px rgba(6, 182, 212, 0.15);
   }
 
-  /* Status dot */
+  /* ── Glass Card (enhanced glassmorphism) ──────────────── */
+  .glass-card {
+    background: var(--color-glass-bg);
+    border: 1px solid var(--color-glass-border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .glass-card:hover {
+    border-color: rgba(6, 182, 212, 0.25);
+    box-shadow: 0 0 30px -10px rgba(6, 182, 212, 0.15);
+  }
+
+  /* ── Bento Card ───────────────────────────────────────── */
+  .bento-card {
+    @apply bg-base-900 border border-white/[0.06] rounded-[2rem] overflow-hidden;
+    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .bento-card:hover {
+    border-color: rgba(6, 182, 212, 0.2);
+    box-shadow: 0 0 40px -12px rgba(6, 182, 212, 0.12);
+    transform: translateY(-2px);
+  }
+
+  /* ── Neon Text Effect ─────────────────────────────────── */
+  .neon-text {
+    color: var(--color-neon-cyan);
+    text-shadow:
+      0 0 7px rgba(6, 182, 212, 0.6),
+      0 0 10px rgba(6, 182, 212, 0.4),
+      0 0 21px rgba(6, 182, 212, 0.3),
+      0 0 42px rgba(6, 182, 212, 0.15);
+  }
+
+  /* ── Neon Border (animated) ───────────────────────────── */
+  .neon-border {
+    position: relative;
+    border-radius: 1rem;
+  }
+  .neon-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--color-neon-cyan),
+      var(--color-neon-violet),
+      var(--color-neon-blue),
+      var(--color-neon-cyan)
+    );
+    background-size: 300% 100%;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: border-dance 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* ── Glitch Text (subtle on hover) ────────────────────── */
+  .glitch-text {
+    transition: transform 0.2s ease;
+  }
+  .glitch-text:hover {
+    animation: glitch 0.3s ease-in-out;
+  }
+
+  /* ── Status Dot ───────────────────────────────────────── */
   .status-dot {
     @apply w-2 h-2 rounded-full bg-accent-cyan relative inline-block;
   }
-
   .status-dot::after {
     content: '';
     @apply absolute inset-0 rounded-full bg-accent-cyan animate-ping opacity-60;
   }
 
-  /* Section label */
+  /* ── Section Label ────────────────────────────────────── */
   .section-label {
     @apply text-[10px] font-bold uppercase tracking-[0.4em] text-white/30 flex items-center gap-3;
   }
-
   .section-label::before {
     content: '';
     @apply block w-8 h-px bg-white/20;
   }
 
-  /* Gradient text */
+  /* ── Gradient Text (cyan → blue → violet) ────────────── */
   .text-gradient {
     background: linear-gradient(135deg, #06B6D4 0%, #2563EB 50%, #7C3AED 100%);
     -webkit-background-clip: text;
@@ -130,13 +319,21 @@
     background-clip: text;
   }
 
-  /* Dot grid background */
+  /* ── Gradient Text (cyan → violet) ────────────────────── */
+  .text-gradient-cyan-violet {
+    background: linear-gradient(135deg, #06B6D4, #7C3AED);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Dot Grid Background ──────────────────────────────── */
   .dot-grid {
-    background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 
-  /* Scan line overlay */
+  /* ── Scan Line Overlay (decorative CRT effect) ────────── */
   .scanlines::before {
     content: '';
     @apply absolute inset-0 pointer-events-none z-10;
@@ -144,30 +341,71 @@
       0deg,
       transparent,
       transparent 2px,
-      rgba(0,0,0,0.03) 2px,
-      rgba(0,0,0,0.03) 4px
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px
     );
   }
 
-  /* Tag pill */
+  /* ── Tag Pill ──────────────────────────────────────────── */
   .tag {
     @apply px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-white/50;
   }
 
-  /* Cursor blink */
+  /* ── Cursor Blink ──────────────────────────────────────── */
   .cursor {
     @apply inline-block w-0.5 h-[1em] bg-accent-cyan ml-1 align-middle;
     animation: cursor-blink 1s ease-in-out infinite;
   }
+
+  /* ── Section Spacing ──────────────────────────────────── */
+  .section-padding {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+  @media (min-width: 768px) {
+    .section-padding {
+      padding-top: 8rem;
+      padding-bottom: 8rem;
+    }
+  }
+
+  /* ── Section Container ────────────────────────────────── */
+  .section-container {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .section-container {
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .section-container {
+      padding-left: 5rem;
+      padding-right: 5rem;
+    }
+  }
 }
 
+/* ═════════════════════════════════════════════════════════════
+   UTILITY LAYER
+   ═════════════════════════════════════════════════════════════ */
 @layer utilities {
+  /* Hide scrollbar (useful for horizontal scrolls) */
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Extreme tight tracking */
   .tracking-ultra { letter-spacing: -0.07em; }
+
+  /* Extreme tight leading */
   .leading-ultra { line-height: 0.82; }
 
-  /* Shimmer animation */
+  /* Shimmer text animation */
   .shimmer-text {
     background: linear-gradient(90deg, #ffffff 0%, #06B6D4 40%, #ffffff 60%, #06B6D4 100%);
     background-size: 200% auto;
@@ -178,22 +416,54 @@
   }
 }
 
+/* ═════════════════════════════════════════════════════════════
+   SELECTION
+   ═════════════════════════════════════════════════════════════ */
 ::selection {
   background: rgba(6, 182, 212, 0.3);
   color: #ffffff;
 }
 
-/* Respect user motion preferences */
+/* ═════════════════════════════════════════════════════════════
+   SCROLLBAR STYLING — Neon OLED Track
+   ═════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-base-950);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent-subtle);
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neon-cyan);
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent-subtle) var(--color-base-950);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   REDUCED MOTION — Respect user preferences
+   ═════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Still allow the scanlines background but kill movement */
+  .scanlines::before {
+    animation: none !important;
   }
 }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #000; }
-::-webkit-scrollbar-thumb { background: #27272A; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #3F3F46; }

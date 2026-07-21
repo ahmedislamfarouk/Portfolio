@@ -1,14 +1,30 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import CursorFollower from '@/components/CursorFollower';
 
 export const metadata: Metadata = {
   title: 'Ahmed Badr | AI Researcher & Robotics Engineer',
-  description: 'Engineering the nexus of sentient vision and autonomous control. SOTA research meets championship-level execution.',
-  keywords: ['AI Researcher', 'Robotics Engineer', 'Computer Vision', 'Deep Learning', 'ROS 2', 'Autonomous Systems'],
+  description:
+    'Engineering the nexus of sentient vision and autonomous control. SOTA research meets championship-level execution. Cyberpunk UI · Neon Aesthetics · Next.js 15.',
+  keywords: [
+    'Ahmed Badr',
+    'AI Researcher',
+    'Robotics Engineer',
+    'Computer Vision',
+    'Deep Learning',
+    'ROS 2',
+    'Autonomous Systems',
+    'Sensor Fusion',
+    'Reinforcement Learning',
+    'Taekwondo Champion',
+    'Portfolio',
+    'Cyberpunk',
+  ],
   authors: [{ name: 'Ahmed Badr' }],
   openGraph: {
     title: 'Ahmed Badr | AI Researcher & Robotics Engineer',
-    description: 'Engineering the nexus of sentient vision and autonomous control.',
+    description:
+      'Engineering the nexus of sentient vision and autonomous control. SOTA research meets championship-level execution.',
     type: 'website',
     locale: 'en_US',
   },
@@ -26,6 +42,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className="antialiased">
+        <CursorFollower />
         {children}
       </body>
     </html>

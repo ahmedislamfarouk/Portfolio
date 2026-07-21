@@ -1,17 +1,16 @@
 import Navigation from '@/components/Navigation';
-import { Hero, WaveLight, ScrollProgress, MarqueeTicker } from '@/components/Hero';
+import { Hero, MarqueeTicker } from '@/components/Hero';
 import Projects from '@/components/Projects';
+import ResearchTimeline from '@/components/ResearchTimeline';
 import Labs from '@/components/Labs';
+import BeyondTheLab from '@/components/BeyondTheLab';
 import Awards from '@/components/Awards';
 import Contact from '@/components/Contact';
+import BackToTop from '@/components/BackToTop';
 
 export default function Home() {
   return (
     <main className="relative min-h-screen">
-      {/* Background Effects */}
-      <WaveLight />
-      <ScrollProgress />
-      
       {/* Navigation */}
       <Navigation />
       
@@ -24,8 +23,14 @@ export default function Home() {
       {/* Projects Section */}
       <Projects />
       
+      {/* Research Journey Timeline */}
+      <ResearchTimeline />
+      
       {/* Research Labs Section */}
       <Labs />
+      
+      {/* Beyond the Lab — Taekwondo Champion Narrative */}
+      <BeyondTheLab />
       
       {/* Awards Section */}
       <Awards />
@@ -42,11 +47,14 @@ export default function Home() {
               <div className="text-[10px] text-white/30 uppercase tracking-[0.2em]">AI Researcher & Robotics Engineer</div>
             </div>
             <div className="text-[10px] text-white/20 uppercase tracking-[0.3em]">
-              © 2024 · Built with Next.js 15
+              &copy; {new Date().getFullYear()} &middot; Built with Next.js 15
             </div>
           </div>
         </div>
       </footer>
+
+      {/* Back to Top */}
+      <BackToTop />
     </main>
   );
 }

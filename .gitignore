@@ -47,3 +47,4 @@ cv_page*.png
 LLM_MEGA_PROMPT.md
 .opencode/
 design-system/
+*.tsbuildinfo
