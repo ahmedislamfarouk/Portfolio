@@ -287,7 +287,7 @@ const LetterDrop = ({
   // Reduced motion — static fallback
   if (prefersReduced) {
     return (
-      <span className="inline-block text-[clamp(3.5rem,14vw,13rem)] font-black tracking-ultra leading-ultra select-none text-white">
+      <span className="inline-block text-[clamp(3.5rem,12vw,11rem)] font-black tracking-ultra leading-ultra select-none text-white">
         {char}
       </span>
     );
@@ -316,7 +316,7 @@ const LetterDrop = ({
             setTimeout(() => setShowBurst(false), 1200);
           }
         }}
-        className="inline-block text-[clamp(3.5rem,14vw,13rem)] font-black tracking-ultra leading-ultra select-none text-white"
+        className="inline-block text-[clamp(3.5rem,12vw,11rem)] font-black tracking-ultra leading-ultra select-none text-white"
         style={{ willChange: 'transform, opacity' }}
       >
         {displayChar}
@@ -354,7 +354,7 @@ const BadrReveal = ({
 
   if (prefersReduced) {
     return (
-      <span className="text-gradient inline-block text-[clamp(3.5rem,14vw,13rem)] font-black tracking-ultra leading-ultra">
+      <span className="text-gradient inline-block text-[clamp(3.5rem,12vw,11rem)] font-black tracking-ultra leading-ultra">
         BADR
       </span>
     );
@@ -408,7 +408,7 @@ const BadrReveal = ({
           damping: 16,
           mass: 1.1,
         }}
-        className="text-gradient inline-block text-[clamp(3.5rem,14vw,13rem)] font-black tracking-ultra leading-ultra relative"
+        className="text-gradient inline-block text-[clamp(3.5rem,12vw,11rem)] font-black tracking-ultra leading-ultra relative"
         style={{
           textShadow: show
             ? intensity === 1
@@ -911,7 +911,7 @@ const Hero = () => {
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-[clamp(3.5rem,14vw,13rem)] tracking-ultra leading-ultra glitch-text relative select-none"
+                  className="text-[clamp(3.5rem,12vw,11rem)] tracking-ultra leading-ultra glitch-text relative select-none"
                 >
                   Ahmed
                   <br />
@@ -1057,7 +1057,7 @@ const Hero = () => {
                 <div className="absolute -left-12 -top-12 -right-12 -bottom-12 bg-accent-cyan/[0.04] blur-[80px] rounded-full pointer-events-none" />
               )}
 
-              <h1 className="text-[clamp(3.5rem,14vw,13rem)] tracking-ultra leading-ultra relative select-none">
+              <h1 className="text-[clamp(3.5rem,12vw,11rem)] tracking-ultra leading-ultra relative select-none pr-2 sm:pr-4">
                 {/* AHMED — letter drops */}
                 <span className="flex items-center gap-1 sm:gap-2 lg:gap-4 mb-1 sm:mb-2">
                   {LETTERS.map((char, i) => {
