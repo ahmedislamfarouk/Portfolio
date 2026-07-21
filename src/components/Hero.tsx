@@ -6,6 +6,7 @@ import {
   useSpring,
   useTransform,
 } from 'framer-motion';
+import { useMouseParallax } from '@/hooks/useMouseParallax';
 import {
   Trophy,
   Bot,
@@ -838,6 +839,10 @@ const Hero = () => {
 
   /* ── Scroll / parallax ────────────────────────────────────── */
   const ref = useRef<HTMLElement>(null);
+  const { x: mouseX, y: mouseY } = useMouseParallax(0.025);
+  const mouseXOpposite = useTransform(mouseX, (v) => -v);
+  const mouseYOpposite = useTransform(mouseY, (v) => -v);
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
@@ -879,8 +884,14 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-base-950/40" />
 
         <motion.div style={{ y }} className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-accent-cyan/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-blue-600/8 rounded-full blur-[100px]" />
+          <motion.div
+            style={{ x: mouseX, y: mouseY }}
+            className="absolute top-1/4 right-1/4 w-96 h-96 bg-accent-cyan/10 rounded-full blur-[120px]"
+          />
+          <motion.div
+            style={{ x: mouseXOpposite, y: mouseYOpposite }}
+            className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-blue-600/8 rounded-full blur-[100px]"
+          />
         </motion.div>
 
         <motion.div style={{ y: ringY }}>
@@ -1016,8 +1027,14 @@ const Hero = () => {
 
       {/* Parallax orbs */}
       <motion.div style={{ y }} className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-accent-cyan/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-blue-600/8 rounded-full blur-[100px]" />
+        <motion.div
+          style={{ x: mouseX, y: mouseY }}
+          className="absolute top-1/4 right-1/4 w-96 h-96 bg-accent-cyan/10 rounded-full blur-[120px]"
+        />
+        <motion.div
+          style={{ x: mouseXOpposite, y: mouseYOpposite }}
+          className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-blue-600/8 rounded-full blur-[100px]"
+        />
       </motion.div>
 
       {/* Decorative rings */}

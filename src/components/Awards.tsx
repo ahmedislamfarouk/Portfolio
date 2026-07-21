@@ -4,6 +4,7 @@ import { motion, useInView } from 'framer-motion';
 import { Trophy, Medal, Award, Star, Sparkles } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
 import { useTiltEffect } from '@/hooks/useTiltEffect';
+import { staggerContainer, fadeSlideUp } from '@/components/animations';
 import SplitText from '@/components/SplitText';
 
 // ── Animated Counter — counts up when element enters viewport ──
@@ -192,6 +193,7 @@ const StatCard = ({
   return (
     <motion.div
       ref={ref}
+      variants={fadeSlideUp}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -264,6 +266,7 @@ const AwardCard = ({
 
   return (
     <motion.article
+      variants={fadeSlideUp}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
@@ -380,7 +383,13 @@ const Awards = () => {
         </motion.div>
 
         {/* ── Stats Row ───────────────────────────────────── */}
-        <div className="grid md:grid-cols-3 gap-5 mb-16">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          className="grid md:grid-cols-3 gap-5 mb-16"
+        >
           {statsData.map((stat, i) => (
             <StatCard
               key={stat.label}
@@ -390,14 +399,20 @@ const Awards = () => {
               delay={0.2 + i * 0.12}
             />
           ))}
-        </div>
+        </motion.div>
 
         {/* ── Awards Bento Grid ───────────────────────────── */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
           {awards.map((award, index) => (
             <AwardCard key={`${award.title}-${award.year}`} award={award} index={index} />
           ))}
-        </div>
+        </motion.div>
 
         {/* ── Bottom decorative spacer ────────────────────── */}
         <motion.div

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { useMouseParallax } from '@/hooks/useMouseParallax';
 import {
   Trophy,
   Medal,
@@ -282,6 +283,8 @@ const StatCard = ({ item, index }: { item: MedalItem; index: number }) => {
 const BeyondTheLab = () => {
   const sectionRef = useRef<HTMLElement>(null);
 
+  const { x: orbX, y: orbY } = useMouseParallax(0.03);
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start end', 'end start'],
@@ -300,29 +303,17 @@ const BeyondTheLab = () => {
         className="absolute inset-0 pointer-events-none"
         aria-hidden
       >
-        <div
+        <motion.div
+          style={{ x: orbX, y: orbY, background: 'radial-gradient(circle, rgba(245,158,11,0.20) 0%, transparent 70%)', filter: 'blur(120px)' }}
           className="absolute top-[15%] -right-40 w-[32rem] h-[32rem] rounded-full opacity-[0.12]"
-          style={{
-            background:
-              'radial-gradient(circle, rgba(245,158,11,0.20) 0%, transparent 70%)',
-            filter: 'blur(120px)',
-          }}
         />
-        <div
+        <motion.div
+          style={{ x: useTransform(orbX, (v) => -v * 1.2), y: useTransform(orbY, (v) => -v * 1.2), background: 'radial-gradient(circle, rgba(124,58,237,0.20) 0%, transparent 70%)', filter: 'blur(100px)' }}
           className="absolute bottom-[20%] -left-40 w-[28rem] h-[28rem] rounded-full opacity-[0.12]"
-          style={{
-            background:
-              'radial-gradient(circle, rgba(124,58,237,0.20) 0%, transparent 70%)',
-            filter: 'blur(100px)',
-          }}
         />
-        <div
+        <motion.div
+          style={{ x: useTransform(orbX, (v) => v * 0.7), y: useTransform(orbY, (v) => v * 0.5), background: 'radial-gradient(circle, rgba(6,182,212,0.18) 0%, transparent 70%)', filter: 'blur(80px)' }}
           className="absolute top-[45%] left-1/3 w-72 h-72 rounded-full opacity-[0.08]"
-          style={{
-            background:
-              'radial-gradient(circle, rgba(6,182,212,0.18) 0%, transparent 70%)',
-            filter: 'blur(80px)',
-          }}
         />
       </motion.div>
 

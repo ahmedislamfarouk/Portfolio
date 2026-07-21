@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Send, ArrowUpRight, Sparkles } from 'lucide-react';
+import { staggerContainer, fadeSlideLeft, fadeSlideRight } from '@/components/animations';
 import SplitText from '@/components/SplitText';
 
 // ── Custom Social Icons (preserved from original) ─────────────
@@ -198,13 +199,16 @@ const Contact = () => {
         </motion.div>
 
         {/* ── Two-column layout ─────────────────────────────── */}
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-20 items-start">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          className="grid lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-20 items-start"
+        >
           {/* ═══ LEFT: Info + Social Links ════════════════════ */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            variants={fadeSlideLeft}
             className="space-y-8"
           >
             {/* Description */}
@@ -246,10 +250,7 @@ const Contact = () => {
 
           {/* ═══ RIGHT: Contact CTA Card ═══════════════════════ */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            variants={fadeSlideRight}
           >
             <div className="bento-card group relative overflow-hidden p-8 md:p-10 lg:p-12">
               <NeonBorderOverlay />
@@ -310,7 +311,7 @@ const Contact = () => {
               </div>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

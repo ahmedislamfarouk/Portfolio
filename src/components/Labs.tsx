@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 import { useTiltEffect } from '@/hooks/useTiltEffect';
+import { staggerContainer, scaleIn } from '@/components/animations';
 import {
   Eye,
   Layers,
@@ -146,6 +147,7 @@ const ResearchAreaCard = ({ area, index }: { area: ResearchArea; index: number }
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
       style={style}
+      variants={scaleIn}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -221,6 +223,7 @@ const ResearchStatCard = ({
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
       style={style}
+      variants={scaleIn}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -332,18 +335,30 @@ const Labs = () => {
         </motion.div>
 
         {/* ── Bento Grid: Research Areas ─────────────────────────── */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          className="grid md:grid-cols-2 gap-6"
+        >
           {researchAreas.map((area, index) => (
             <ResearchAreaCard key={area.title} area={area} index={index} />
           ))}
-        </div>
+        </motion.div>
 
         {/* ── Research Stats Grid ────────────────────────────────── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16"
+        >
           {researchStats.map((stat, index) => (
             <ResearchStatCard key={stat.label} stat={stat} index={index} />
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

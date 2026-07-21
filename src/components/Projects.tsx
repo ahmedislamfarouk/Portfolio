@@ -5,6 +5,7 @@ import { ArrowUpRight, X, ExternalLink } from 'lucide-react';
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { projects, type Project } from '@/data/projects';
 import { useTiltEffect } from '@/hooks/useTiltEffect';
+import { staggerContainer, fadeSlideUp } from '@/components/animations';
 import SplitText from '@/components/SplitText';
 
 /* ─────────────────────────────────────────────────────────────
@@ -164,6 +165,7 @@ const ProjectCard = ({
 
   return (
     <motion.article
+      variants={fadeSlideUp}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
@@ -682,8 +684,12 @@ const Projects = () => {
               </p>
             </motion.div>
           ) : (
-            <div
+            <motion.div
               key="project-grid"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-40px' }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {/* Featured (spans 2 cols on desktop) */}
@@ -706,7 +712,7 @@ const Projects = () => {
                   onClick={() => setSelectedProject(project)}
                 />
               ))}
-            </div>
+            </motion.div>
           )}
         </AnimatePresence>
 
