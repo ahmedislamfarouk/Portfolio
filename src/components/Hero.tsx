@@ -877,7 +877,7 @@ const Hero = () => {
       <section
         id="about"
         ref={ref}
-        className="relative flex items-center overflow-hidden min-h-dvh pt-28"
+      className="relative flex items-center min-h-dvh pt-28"
       >
         <WaveLight />
         <div className="absolute inset-0 dot-grid opacity-30" />

@@ -316,6 +316,10 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    /* Prevent sub-pixel character clipping on edges */
+    -webkit-text-stroke: 0.5px transparent;
+    padding: 0 2px;
+    margin: 0 -2px;
   }
 
   /* ── Gradient Text (cyan → violet) ────────────────────── */
@@ -399,7 +403,7 @@
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
   /* Extreme tight tracking */
-  .tracking-ultra { letter-spacing: -0.07em; }
+  .tracking-ultra { letter-spacing: -0.04em; }
 
   /* Extreme tight leading */
   .leading-ultra { line-height: 0.82; }
