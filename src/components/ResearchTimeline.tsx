@@ -134,14 +134,15 @@ const dotGlowVariants = {
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 32, scale: 0.97 },
+  hidden: { opacity: 0, y: 40, scale: 0.85 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: {
-      duration: 0.6,
-      ease: EASE_OUT_QUART,
+      type: 'spring' as const,
+      stiffness: 120,
+      damping: 14,
     },
   },
 };
@@ -172,6 +173,38 @@ const tagVariants = {
   }),
 };
 
+/* ------------------------------------------------------------------ */
+/*  Content stagger variants (inside each card)                        */
+/* ------------------------------------------------------------------ */
+
+const contentStaggerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.15,
+    },
+  },
+};
+
+const contentItemSlideLeft = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.5, ease: EASE_OUT_QUART },
+  },
+};
+
+const contentItemFadeUp = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: EASE_OUT_QUART },
+  },
+};
+
 /* ================================================================== */
 /*  TimelineEntryCard                                                  */
 /* ================================================================== */
@@ -186,6 +219,20 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
   const style = TYPE_STYLES[entry.type];
   const IconComponent = entry.icon ? ICON_MAP[entry.icon] : Code2;
   const cardRef = useRef<HTMLDivElement>(null);
+  const prefersReduced = useReducedMotion();
+
+  /* ── 3D perspective on scroll ─────────────────────────── */
+  const { scrollYProgress: cardScrollProgress } = useScroll({
+    target: cardRef,
+    offset: ['start end', 'end start'],
+  });
+  const cardRotateX = useTransform(
+    cardScrollProgress,
+    [0, 0.25, 0.5, 0.75, 1],
+    prefersReduced
+      ? [0, 0, 0, 0, 0]
+      : [6, 2.5, 0.5, -0.5, -1],
+  );
 
   const {
     ref: glassRef,
@@ -198,17 +245,26 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
   });
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: '-80px' }}
-      className="relative flex items-start gap-5 md:gap-8 group"
-      ref={cardRef}
-    >
-      {/* ================================================================ */}
-      {/* Timeline column – line + dot                                     */}
-      {/* ================================================================ */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-80px' }}
+        className="relative flex items-start gap-5 md:gap-8 group"
+        ref={cardRef}
+        style={
+          prefersReduced
+            ? {}
+            : ({
+                rotateX: cardRotateX,
+                perspective: 1000,
+                transformStyle: 'preserve-3d',
+              } as React.CSSProperties)
+        }
+      >
+        {/* ================================================================ */}
+        {/* Timeline column – line + dot                                     */}
+        {/* ================================================================ */}
       <div className="relative flex flex-col items-center pt-1.5">
         {/* Dot */}
         <motion.div variants={dotVariants} className="relative z-10">
@@ -275,7 +331,7 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
       >
         {/* Date + type badge row */}
         <div className="flex items-center gap-3 mb-3">
-          <div className="flex items-center gap-1.5 text-white/35">
+          <div className="flex items-center gap-1.5 text-white/55">
             <Calendar size={11} />
             <span className="text-[10px] font-bold uppercase tracking-[0.2em]">
               {entry.date}
@@ -301,7 +357,7 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
           onMouseMove={glassMouseMove}
           onMouseLeave={glassMouseLeave}
           style={glassStyle}
-          className="glass-card group/card relative overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
+          className="glass-card group/card relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_-8px_rgba(6,182,212,0.25)]"
         >
           {/* Neon left-border accent */}
           <span
@@ -309,6 +365,17 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
             style={{
               backgroundColor: style.accent,
               boxShadow: `0 0 8px ${style.glow}, 0 0 20px ${style.glow}`,
+            }}
+            aria-hidden="true"
+          />
+
+          {/* Chasing light — bright spot travels down the border on hover */}
+          <span
+            className="absolute left-[-1px] w-[5px] h-6 rounded-full opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none"
+            style={{
+              backgroundColor: style.accent,
+              boxShadow: `0 0 12px ${style.glow}, 0 0 30px ${style.glow}`,
+              animation: 'chase-light 1.5s ease-in-out infinite',
             }}
             aria-hidden="true"
           />
@@ -322,42 +389,57 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
           />
 
           {/* Content (relative to sit above overlays) */}
-          <div className="relative z-10">
+          <motion.div
+            variants={contentStaggerVariants}
+            className="relative z-10"
+          >
             {/* Top row: icon */}
-            <div className="flex items-start justify-between mb-4">
+            <motion.div
+              variants={contentItemSlideLeft}
+              className="flex items-start justify-between mb-4"
+            >
               <div
                 className="flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300 group-hover/card:scale-110 group-hover/card:-rotate-[4deg]"
                 style={{ backgroundColor: style.bg }}
               >
                 <IconComponent size={18} style={{ color: style.accent }} />
               </div>
-            </div>
+            </motion.div>
 
             {/* Title */}
-            <h3 className="text-xl md:text-2xl font-black uppercase tracking-ultra text-white mb-1 leading-[0.9]">
+            <motion.h3
+              variants={contentItemSlideLeft}
+              className="text-xl md:text-2xl font-black uppercase tracking-ultra text-white mb-1 leading-[0.9]"
+            >
               {entry.title}
-            </h3>
+            </motion.h3>
 
             {/* Organisation + location */}
-            <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <motion.div
+              variants={contentItemFadeUp}
+              className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1"
+            >
               <span className="text-sm font-semibold text-white/70">
                 {entry.organization}
               </span>
               <span className="hidden sm:inline text-white/15" aria-hidden="true">
                 ·
               </span>
-              <div className="flex items-center gap-1 text-white/40">
+              <div className="flex items-center gap-1 text-white/60">
                 <MapPin size={10} />
                 <span className="text-[10px] font-bold uppercase tracking-[0.15em]">
                   {entry.location}
                 </span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Description */}
-            <p className="mb-4 text-sm leading-relaxed text-white/50">
+            <motion.p
+              variants={contentItemFadeUp}
+              className="mb-4 text-base leading-relaxed text-white/65"
+            >
               {entry.description}
-            </p>
+            </motion.p>
 
             {/* Highlights — animated staggered list */}
             {entry.highlights.length > 0 && (
@@ -370,7 +452,7 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true }}
-                    className="flex items-start gap-3 text-sm text-white/40"
+                    className="flex items-start gap-3 text-base text-white/60"
                   >
                     <span
                       className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full"
@@ -396,14 +478,14 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true }}
-                    className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-white/35 transition-all duration-200 hover:scale-105 hover:border-accent-cyan/30 hover:text-accent-cyan/70 hover:shadow-[0_0_12px_rgba(6,182,212,0.15)] cursor-default"
+                    className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-white/55 transition-all duration-200 hover:scale-105 hover:border-accent-cyan/30 hover:text-accent-cyan/70 hover:shadow-[0_0_12px_rgba(6,182,212,0.15)] cursor-default"
                   >
                     {tag}
                   </motion.span>
                 ))}
               </div>
             )}
-          </div>
+          </motion.div>
         </motion.div>
       </motion.div>
     </motion.div>
@@ -441,6 +523,64 @@ const ResearchTimeline = () => {
     lineScrollProgress,
     [0, 0.08, 0.9, 1],
     [0, 1, 1, 0],
+  );
+
+  /* ── Glow trail ─────────────────────────────────────────── */
+  const glowTrailOpacity = useTransform(
+    lineScrollProgress,
+    [0, 0.05, 0.2, 0.5, 0.9, 1],
+    prefersReducedMotion
+      ? [0, 0, 0, 0, 0, 0]
+      : [0, 0.25, 0.15, 0.2, 0.1, 0],
+  );
+
+  /* ── Traveling data nodes ──────────────────────────────── */
+  const node1Opacity = useTransform(
+    lineScrollProgress,
+    [0, 0.06, 0.3, 1],
+    [0, 1, 1, 0],
+  );
+  const node1Y = useTransform(
+    lineScrollProgress,
+    [0, 0.3],
+    ['2%', '33%'],
+  );
+  const node1Scale = useTransform(
+    lineScrollProgress,
+    [0, 0.06, 0.3],
+    [0, 1, 1],
+  );
+
+  const node2Opacity = useTransform(
+    lineScrollProgress,
+    [0, 0.25, 0.35, 0.65, 1],
+    [0, 0, 1, 1, 0],
+  );
+  const node2Y = useTransform(
+    lineScrollProgress,
+    [0.25, 0.65],
+    ['33%', '66%'],
+  );
+  const node2Scale = useTransform(
+    lineScrollProgress,
+    [0, 0.25, 0.35, 0.65],
+    [0, 0, 1, 1],
+  );
+
+  const node3Opacity = useTransform(
+    lineScrollProgress,
+    [0, 0.55, 0.7, 1],
+    [0, 0, 1, 1],
+  );
+  const node3Y = useTransform(
+    lineScrollProgress,
+    [0.55, 1],
+    ['66%', '100%'],
+  );
+  const node3Scale = useTransform(
+    lineScrollProgress,
+    [0, 0.55, 0.7, 1],
+    [0, 0, 1, 1],
   );
 
   return (
@@ -484,7 +624,43 @@ const ResearchTimeline = () => {
       {/* Dot grid overlay */}
       <div className="absolute inset-0 dot-grid opacity-20" aria-hidden />
 
-      <div className="section-container relative z-10">
+      {/* Floating decorative dots along the timeline path */}
+      {!prefersReducedMotion && (
+        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden="true">
+          <div
+            className="absolute w-1.5 h-1.5 rounded-full opacity-30 animate-float-dot"
+            style={{ left: '7%', top: '12%', backgroundColor: '#06B6D4', animationDelay: '0s', animationDuration: '6s' }}
+          />
+          <div
+            className="absolute w-1 h-1 rounded-full opacity-20 animate-float-dot"
+            style={{ left: '4%', top: '28%', backgroundColor: '#2563EB', animationDelay: '1.2s', animationDuration: '7.5s' }}
+          />
+          <div
+            className="absolute w-2 h-2 rounded-full opacity-25 animate-float-dot"
+            style={{ left: '9%', top: '42%', backgroundColor: '#7C3AED', animationDelay: '0.6s', animationDuration: '8s' }}
+          />
+          <div
+            className="absolute w-1 h-1 rounded-full opacity-20 animate-float-dot"
+            style={{ left: '5%', top: '55%', backgroundColor: '#06B6D4', animationDelay: '2s', animationDuration: '6.5s' }}
+          />
+          <div
+            className="absolute w-1.5 h-1.5 rounded-full opacity-25 animate-float-dot"
+            style={{ left: '8%', top: '70%', backgroundColor: '#10B981', animationDelay: '1.5s', animationDuration: '7s' }}
+          />
+          <div
+            className="absolute w-1 h-1 rounded-full opacity-15 animate-float-dot"
+            style={{ left: '3%', top: '85%', backgroundColor: '#7C3AED', animationDelay: '0.3s', animationDuration: '9s' }}
+          />
+        </div>
+      )}
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, margin: '-40px' }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="section-container relative z-10"
+      >
         {/* ---- Section header ---- */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -502,7 +678,7 @@ const ResearchTimeline = () => {
               Journey
             </SplitText>
           </h2>
-          <p className="mt-4 max-w-xl text-sm md:text-base text-white/30 font-medium tracking-wide leading-relaxed">
+          <p className="mt-4 max-w-xl text-sm md:text-base text-white/50 font-medium tracking-wide leading-relaxed">
             From academic foundations to cutting-edge research — a chronology of
             discovery and impact.
           </p>
@@ -510,9 +686,22 @@ const ResearchTimeline = () => {
 
         {/* ---- Timeline entries with animated line ---- */}
         <div className="relative mx-auto max-w-3xl" ref={timelineRef}>
+          {/* Glow trail — blurred neon pulse that follows the drawn line */}
+          <motion.div
+            className="absolute left-[5px] top-0 w-[6px] origin-top z-0 pointer-events-none"
+            style={{
+              scaleY: lineScaleY,
+              opacity: glowTrailOpacity,
+              background:
+                'linear-gradient(to bottom, #06B6D4, #2563EB, #7C3AED, #10B981)',
+              filter: 'blur(8px)',
+            }}
+            aria-hidden="true"
+          />
+
           {/* Animated timeline line — draws on scroll */}
           <motion.div
-            className="absolute left-[7px] top-0 w-[2px] origin-top z-0"
+            className="absolute left-[7px] top-0 w-[2px] origin-top z-[1]"
             style={{
               scaleY: lineScaleY,
               opacity: lineOpacity,
@@ -524,6 +713,51 @@ const ResearchTimeline = () => {
             aria-hidden="true"
           />
 
+          {/* Traveling data nodes — tiny glowing dots that ride the line */}
+          {!prefersReducedMotion && (
+            <>
+              {/* Node 1 — cyan (early entries) */}
+              <motion.span
+                className="absolute left-[3px] w-[10px] h-[10px] rounded-full z-[2] pointer-events-none"
+                style={{
+                  backgroundColor: '#06B6D4',
+                  boxShadow:
+                    '0 0 16px rgba(6,182,212,0.7), 0 0 40px rgba(6,182,212,0.3)',
+                  top: node1Y,
+                  opacity: node1Opacity,
+                  scale: node1Scale,
+                }}
+                aria-hidden="true"
+              />
+              {/* Node 2 — violet (middle entries) */}
+              <motion.span
+                className="absolute left-[3px] w-[10px] h-[10px] rounded-full z-[2] pointer-events-none"
+                style={{
+                  backgroundColor: '#7C3AED',
+                  boxShadow:
+                    '0 0 16px rgba(124,58,237,0.7), 0 0 40px rgba(124,58,237,0.3)',
+                  top: node2Y,
+                  opacity: node2Opacity,
+                  scale: node2Scale,
+                }}
+                aria-hidden="true"
+              />
+              {/* Node 3 — green (later entries) */}
+              <motion.span
+                className="absolute left-[3px] w-[10px] h-[10px] rounded-full z-[2] pointer-events-none"
+                style={{
+                  backgroundColor: '#10B981',
+                  boxShadow:
+                    '0 0 16px rgba(16,185,129,0.7), 0 0 40px rgba(16,185,129,0.3)',
+                  top: node3Y,
+                  opacity: node3Opacity,
+                  scale: node3Scale,
+                }}
+                aria-hidden="true"
+              />
+            </>
+          )}
+
           {timeline.map((entry, index) => (
             <TimelineEntryCard
               key={`${entry.title}-${entry.date}-${index}`}
@@ -533,7 +767,7 @@ const ResearchTimeline = () => {
             />
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

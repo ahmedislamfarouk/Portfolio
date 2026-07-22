@@ -2,16 +2,30 @@
 
 import { motion, useInView } from 'framer-motion';
 import { Trophy, Medal, Award, Star, Sparkles } from 'lucide-react';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useSyncExternalStore } from 'react';
 import { useTiltEffect } from '@/hooks/useTiltEffect';
 import { staggerContainer, fadeSlideUp } from '@/components/animations';
 import SplitText from '@/components/SplitText';
 
+function subscribeToReducedMotion(cb: () => void) {
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+}
+function getReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+function getReducedMotionServer() {
+  return false;
+}
+
 // ── Animated Counter — counts up when element enters viewport ──
 const useCountUp = (end: number, duration = 2200) => {
-  const prefersReduced =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReduced = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotion,
+    getReducedMotionServer,
+  );
   const [count, setCount] = useState(prefersReduced ? end : 0);
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
@@ -231,7 +245,7 @@ const StatCard = ({
             </span>
           )}
         </div>
-        <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 mt-1">
+        <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 mt-1">
           {label}
         </div>
       </div>
@@ -315,18 +329,18 @@ const AwardCard = ({
             >
               <IconComponent size={22} />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mt-1">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 mt-1">
               {award.year}
             </span>
           </div>
 
           {/* Title */}
-          <h3 className="text-lg font-black uppercase tracking-ultra text-white leading-tight">
+          <h3 className="text-xl font-black uppercase tracking-ultra text-white leading-tight">
             {award.title}
           </h3>
 
           {/* Organization */}
-          <div className="text-sm text-white/40 leading-relaxed">
+          <div className="text-base text-white/60 leading-relaxed">
             {award.organization}
           </div>
 
@@ -351,16 +365,34 @@ const AwardCard = ({
 
 const Awards = () => {
   return (
-    <section id="awards" className="section-padding relative overflow-hidden">
+    <motion.section
+      id="awards"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className="section-padding relative overflow-hidden"
+    >
       {/* Background ambient glow */}
       <div
         className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full bg-neon-cyan/5 blur-[140px] pointer-events-none"
         aria-hidden
+        style={{ animation: 'hue-shift 14s ease-in-out infinite' }}
       />
       <div
         className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-neon-violet/5 blur-[100px] pointer-events-none"
         aria-hidden
+        style={{ animation: 'hue-shift 12s ease-in-out infinite reverse' }}
       />
+
+      {/* Floating decorative dots */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute w-2 h-2 rounded-full bg-neon-cyan/4 top-[20%] left-[10%] animate-float-dot" style={{ animationDelay: '0s', animationDuration: '8s' }} />
+        <div className="absolute w-1 h-1 rounded-full bg-neon-violet/5 top-[40%] right-[15%] animate-float-dot" style={{ animationDelay: '1.5s', animationDuration: '7s' }} />
+        <div className="absolute w-[3px] h-[3px] rounded-full bg-neon-blue/4 bottom-[30%] left-[20%] animate-float-dot" style={{ animationDelay: '2.8s', animationDuration: '9s' }} />
+        <div className="absolute w-1.5 h-1.5 rounded-full bg-white/3 bottom-[20%] right-[25%] animate-float-dot" style={{ animationDelay: '0.6s', animationDuration: '6.5s' }} />
+        <div className="absolute w-2 h-2 rounded-full bg-neon-cyan/3 top-[70%] left-[5%] animate-float-dot" style={{ animationDelay: '3.5s', animationDuration: '10s' }} />
+      </div>
 
       <div className="section-container relative z-10">
         {/* ── Header ──────────────────────────────────────── */}
@@ -428,7 +460,7 @@ const Awards = () => {
           </div>
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

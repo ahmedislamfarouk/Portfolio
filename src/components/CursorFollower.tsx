@@ -59,8 +59,8 @@ const CursorFollower = () => {
         marginTop: -4,
       }}
     >
-      {/* Core dot */}
-      <div className="absolute inset-0 rounded-full bg-neon-cyan" />
+      {/* Core dot with neon glow */}
+      <div className="absolute inset-0 rounded-full bg-neon-cyan cursor-dot-core" />
 
       {/* Outer glow layers */}
       <div
@@ -85,7 +85,6 @@ const CursorFollower = () => {
             0 0 28px rgba(6,182,212,0.2);
         }
       `}</style>
-      <div className="absolute inset-0 rounded-full cursor-dot-core bg-neon-cyan" />
     </motion.div>
   );
 };

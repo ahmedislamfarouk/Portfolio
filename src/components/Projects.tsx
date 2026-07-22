@@ -137,6 +137,31 @@ const ShimmerImage = ({
           loaded ? 'opacity-100' : 'opacity-0'
         }`}
       />
+
+      {/* Animated scan line overlay on hover — slides from top to bottom */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none z-10 opacity-0 group-hover:opacity-100"
+        initial={{ y: '-100%' }}
+        whileInView={{ y: '100%' }}
+        transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
+        style={{
+          background:
+            'linear-gradient(to bottom, transparent 0%, rgba(6,182,212,0.04) 40%, rgba(6,182,212,0.08) 50%, rgba(6,182,212,0.04) 60%, transparent 100%)',
+        }}
+      />
+
+      {/* Brightness pulse overlay on hover */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none z-10 opacity-0 group-hover:opacity-100"
+        animate={{
+          background: [
+            'radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.02) 0%, transparent 70%)',
+            'radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.06) 0%, transparent 70%)',
+            'radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.02) 0%, transparent 70%)',
+          ],
+        }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+      />
     </div>
   );
 };
@@ -210,7 +235,7 @@ const ProjectCard = ({
           <ShimmerImage
             src={project.image}
             alt={project.title}
-            imgClassName="w-full h-full object-cover grayscale brightness-40 group-hover:grayscale-0 group-hover:brightness-60 transition-all duration-[800ms] scale-105 group-hover:scale-100"
+            imgClassName="w-full h-full object-cover grayscale brightness-40 group-hover:grayscale-0 group-hover:brightness-60 transition-all duration-[800ms] scale-110 group-hover:scale-100"
           />
         </div>
 
@@ -243,7 +268,7 @@ const ProjectCard = ({
         {/* ── Bottom info ────────────────────────────────── */}
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-7 z-20">
           <div
-            className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 mb-2 flex items-center gap-3"
+            className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 mb-2 flex items-center gap-3"
             style={{ transform: 'translateZ(30px)' }}
           >
             <span>{project.category}</span>
@@ -266,14 +291,28 @@ const ProjectCard = ({
           </div>
         </div>
 
-        {/* ── Scan line decorative overlay ────────────────── */}
-        <div
-          className="absolute inset-0 rounded-[2rem] pointer-events-none z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+        {/* ── Scan line decorative overlay (animated sweep) ── */}
+        <motion.div
+          className="absolute inset-0 rounded-[2rem] pointer-events-none z-10 opacity-0 group-hover:opacity-100"
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 1 }}
           style={{
             background:
-              'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(6,182,212,0.015) 2px, rgba(6,182,212,0.015) 4px)',
+              'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(6,182,212,0.02) 2px, rgba(6,182,212,0.02) 4px)',
           }}
-        />
+        >
+          {/* Sweeping beam */}
+          <motion.div
+            className="absolute inset-0"
+            animate={{ y: ['-100%', '100%'] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+            style={{
+              height: '30%',
+              background:
+                'linear-gradient(to bottom, transparent 0%, rgba(6,182,212,0.06) 40%, rgba(6,182,212,0.12) 50%, rgba(6,182,212,0.06) 60%, transparent 100%)',
+            }}
+          />
+        </motion.div>
       </motion.div>
     </motion.article>
   );
@@ -418,7 +457,7 @@ const ProjectModal = ({
 
             {/* Title overlay on image */}
             <div className="absolute bottom-6 left-6 right-6 md:right-0 z-20">
-              <div className="text-[9px] font-bold uppercase tracking-[0.4em] text-white/30 mb-2 flex items-center gap-2">
+              <div className="text-[9px] font-bold uppercase tracking-[0.4em] text-white/50 mb-2 flex items-center gap-2">
                 <span>{project.year}</span>
                 <span className="w-1 h-1 rounded-full bg-white/20" />
                 <span>{project.category}</span>
@@ -494,7 +533,7 @@ const ProjectModal = ({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.4 }}
-              className="text-white/50 text-sm md:text-base leading-relaxed mb-6"
+              className="text-white/65 text-sm md:text-base leading-relaxed mb-6"
             >
               {project.description}
             </motion.p>
@@ -506,16 +545,16 @@ const ProjectModal = ({
               variants={containerVariants}
               className="mb-6"
             >
-              <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 mb-4 flex items-center gap-2">
+              <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 mb-4 flex items-center gap-2">
                 <span className="w-5 h-px bg-white/10" />
                 Key Achievements
               </h4>
               <ul className="space-y-2.5">
-                {project.details.map((detail, i) => (
+                {project.details.map((detail) => (
                   <motion.li
-                    key={i}
+                    key={detail}
                     variants={itemVariants}
-                    className="flex items-start gap-3 text-white/40 text-sm group/li"
+                    className="flex items-start gap-3 text-white/60 text-sm group/li"
                   >
                     <span className="relative flex-shrink-0 mt-1.5">
                       <span className="block w-2 h-2 rounded-full border border-neon-cyan/40 group-hover/li:bg-neon-cyan/30 transition-colors duration-300" />
@@ -534,7 +573,7 @@ const ProjectModal = ({
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
-              <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 mb-4 flex items-center gap-2">
+              <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 mb-4 flex items-center gap-2">
                 <span className="w-5 h-px bg-white/10" />
                 Technologies
               </h4>
@@ -545,7 +584,7 @@ const ProjectModal = ({
                     initial={{ opacity: 0, scale: 0.85 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.45 + i * 0.04, duration: 0.3 }}
-                    className="group/pill relative px-3.5 py-1.5 bg-white/[0.03] border border-white/[0.07] rounded-full text-[10px] font-bold uppercase tracking-wider text-white/40 transition-all duration-300 hover:bg-neon-cyan/10 hover:border-neon-cyan/30 hover:text-neon-cyan hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] cursor-default"
+                    className="group/pill relative px-3.5 py-1.5 bg-white/[0.03] border border-white/[0.07] rounded-full text-[10px] font-bold uppercase tracking-wider text-white/60 transition-all duration-300 hover:bg-neon-cyan/10 hover:border-neon-cyan/30 hover:text-neon-cyan hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] cursor-default"
                   >
                     {tech}
                   </motion.span>
@@ -583,7 +622,7 @@ const FilterTabs = ({
             className={`relative px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 cursor-pointer focus-visible:ring-2 focus-visible:ring-neon-cyan ${
               isActive
                 ? 'text-white border border-neon-cyan/40 bg-neon-cyan/10'
-                : 'text-white/30 border border-white/[0.06] bg-transparent hover:text-white/60 hover:border-white/20'
+                : 'text-white/50 border border-white/[0.06] bg-transparent hover:text-white/70 hover:border-white/20'
             }`}
           >
             {filter}
@@ -623,15 +662,24 @@ const Projects = () => {
   }, []);
 
   return (
-    <section id="projects" className="py-28 md:py-40 relative">
-      {/* Background ambient glow */}
+    <motion.section
+      id="projects"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className="py-28 md:py-40 relative"
+    >
+      {/* Background ambient glow with hue-shift */}
       <div
         className="absolute top-1/4 right-0 w-[600px] h-[600px] rounded-full bg-neon-cyan/5 blur-[160px] pointer-events-none"
         aria-hidden="true"
+        style={{ animation: 'hue-shift 16s ease-in-out infinite' }}
       />
       <div
         className="absolute bottom-1/4 left-0 w-[400px] h-[400px] rounded-full bg-neon-violet/5 blur-[120px] pointer-events-none"
         aria-hidden="true"
+        style={{ animation: 'hue-shift 13s ease-in-out infinite reverse' }}
       />
 
       <div className="max-w-[1400px] mx-auto w-full px-6 md:px-12 lg:px-20 relative z-10">
@@ -745,7 +793,7 @@ const Projects = () => {
         project={selectedProject}
         onClose={() => setSelectedProject(null)}
       />
-    </section>
+    </motion.section>
   );
 };
 

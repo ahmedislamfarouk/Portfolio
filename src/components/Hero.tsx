@@ -16,7 +16,7 @@ import {
   Sparkles,
   type LucideIcon,
 } from 'lucide-react';
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useSyncExternalStore } from 'react';
 
 // ═════════════════════════════════════════════════════════════════════
 //  Constants
@@ -25,6 +25,18 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 const GLITCH_CHARS = '!<>-_\\/[]{}—=+*^?#ABCXYZabcxyz0123456789';
 const randomChar = (): string =>
   GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+
+function subscribeToReducedMotion(cb: () => void) {
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+}
+function getReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+function getReducedMotionServer() {
+  return false;
+}
 
 type CinematicPhase =
   | 'intro'
@@ -140,9 +152,11 @@ const useTypewriter = (
 // ═════════════════════════════════════════════════════════════════════
 
 const useCountUp = (end: number, duration = 2200) => {
-  const prefersReduced =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReduced = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotion,
+    getReducedMotionServer,
+  );
   const [count, setCount] = useState(prefersReduced ? end : 0);
   const ref = useRef<HTMLDivElement>(null);
   const hasAnimated = useRef(false);
@@ -264,6 +278,7 @@ const LetterDrop = ({
   const [showBurst, setShowBurst] = useState(false);
   const landedRef = useRef(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const burstTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Glitch scramble when letter starts dropping
   useEffect(() => {
@@ -284,6 +299,12 @@ const LetterDrop = ({
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [isActive, char, prefersReduced]);
+
+  useEffect(() => {
+    return () => {
+      if (burstTimeoutRef.current) clearTimeout(burstTimeoutRef.current);
+    };
+  }, []);
 
   // Reduced motion — static fallback
   if (prefersReduced) {
@@ -314,7 +335,7 @@ const LetterDrop = ({
             landedRef.current = true;
             setShowBurst(true);
             onLand();
-            setTimeout(() => setShowBurst(false), 1200);
+            burstTimeoutRef.current = setTimeout(() => setShowBurst(false), 1200);
           }
         }}
         className="inline-block text-[clamp(3.5rem,12vw,11rem)] font-black tracking-ultra leading-ultra select-none text-white"
@@ -738,7 +759,7 @@ const StatCard = ({ icon: Icon, value, suffix, label, delay }: StatCardProps) =>
             {count}
             <span className="text-accent-cyan/60">{suffix}</span>
           </div>
-          <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 mt-0.5 whitespace-nowrap">
+          <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 mt-0.5 whitespace-nowrap">
             {label}
           </div>
         </div>
@@ -809,6 +830,13 @@ const FloatingRing = () => (
 //  HERO — cinematic entrance centerpiece
 // ═════════════════════════════════════════════════════════════════════
 
+const HERO_ROLES = [
+  'AI Researcher',
+  'Robotics Engineer',
+  'Vision Systems',
+  'Champion Athlete',
+];
+
 const Hero = () => {
   /* ── Reduced motion detection ─────────────────────────────── */
   const [prefersReduced, setPrefersReduced] = useState(() =>
@@ -828,14 +856,8 @@ const Hero = () => {
   const phase = useCinematicSequence(prefersReduced);
 
   /* ── Typewriter ───────────────────────────────────────────── */
-  const roles = [
-    'AI Researcher',
-    'Robotics Engineer',
-    'Vision Systems',
-    'Champion Athlete',
-  ];
   const typewriterStart = phase === 'typewriter' || phase === 'complete' || prefersReduced;
-  const role = useTypewriter(roles, 80, 2200, typewriterStart);
+  const role = useTypewriter(HERO_ROLES, 80, 2200, typewriterStart);
 
   /* ── Scroll / parallax ────────────────────────────────────── */
   const ref = useRef<HTMLElement>(null);
@@ -934,7 +956,7 @@ const Hero = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex items-center gap-2 text-xl md:text-2xl font-light text-white/60 h-8"
+                className="flex items-center gap-2 text-2xl md:text-3xl font-light text-white/75 h-8"
               >
                 <span>{role}</span>
                 <span className="cursor" aria-hidden="true" />
@@ -944,7 +966,7 @@ const Hero = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-white/40 text-base max-w-lg leading-relaxed"
+                className="text-white/60 text-lg max-w-lg leading-relaxed"
               >
                 Engineering the nexus of sentient vision and autonomous control.
                 SOTA research meets championship-level execution.
@@ -971,13 +993,13 @@ const Hero = () => {
               >
                 <div className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[0.3em] text-white/15 pt-2">
                   <span className="text-white/8">Featured:</span>
-                  <span className="text-white/30 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">UofL</span>
+                  <span className="text-white/50 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">UofL</span>
                   <span className="text-white/8">·</span>
-                  <span className="text-white/30 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">JMU</span>
+                  <span className="text-white/50 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">JMU</span>
                   <span className="text-white/8">·</span>
-                  <span className="text-white/30 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">Virginia Tech</span>
+                  <span className="text-white/50 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">Virginia Tech</span>
                   <span className="text-white/8">·</span>
-                  <span className="text-white/30 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">AIU</span>
+                  <span className="text-white/50 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">AIU</span>
                 </div>
               </motion.div>
             </div>
@@ -1125,7 +1147,7 @@ const Hero = () => {
                   delay: phase === 'typewriter' ? 0 : 0,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="flex items-center gap-2 text-xl md:text-2xl font-light text-white/60 h-8"
+                className="flex items-center gap-2 text-2xl md:text-3xl font-light text-white/75 h-8"
               >
                 <span>{role}</span>
                 <span className="cursor" aria-hidden="true" />
@@ -1142,7 +1164,7 @@ const Hero = () => {
                   delay: 0.1,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="text-white/40 text-base max-w-lg leading-relaxed"
+                className="text-white/60 text-lg max-w-lg leading-relaxed"
               >
                 Engineering the nexus of sentient vision and autonomous
                 control. SOTA research meets championship-level execution.
@@ -1179,19 +1201,19 @@ const Hero = () => {
               >
                 <div className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[0.3em] text-white/15 pt-2">
                   <span className="text-white/8">Featured:</span>
-                  <span className="text-white/30 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">
+                  <span className="text-white/50 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">
                     UofL
                   </span>
                   <span className="text-white/8">·</span>
-                  <span className="text-white/30 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">
+                  <span className="text-white/50 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">
                     JMU
                   </span>
                   <span className="text-white/8">·</span>
-                  <span className="text-white/30 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">
+                  <span className="text-white/50 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">
                     Virginia Tech
                   </span>
                   <span className="text-white/8">·</span>
-                  <span className="text-white/30 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">
+                  <span className="text-white/50 hover:text-accent-cyan/70 transition-colors duration-200 cursor-default">
                     AIU
                   </span>
                 </div>

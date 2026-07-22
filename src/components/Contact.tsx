@@ -8,13 +8,13 @@ import SplitText from '@/components/SplitText';
 // ── Custom Social Icons (preserved from original) ─────────────
 
 const GithubIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z" />
   </svg>
 );
 
 const LinkedinIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
   </svg>
 );
@@ -118,17 +118,17 @@ const SocialLinkCard = ({ link, index }: { link: SocialLink; index: number }) =>
 
       {/* Icon container */}
       <div className="relative z-10 w-10 h-10 min-w-[2.5rem] rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center group-hover:scale-110 group-hover:border-accent-cyan/30 transition-all duration-300">
-        <div className="text-white/50 group-hover:text-accent-cyan transition-colors duration-300">
+        <div className="text-white/65 group-hover:text-accent-cyan transition-colors duration-300">
           <IconComponent size={18} />
         </div>
       </div>
 
       {/* Text */}
       <div className="relative z-10 flex-1 min-w-0">
-        <div className="text-sm font-bold text-white/80 group-hover:text-white transition-colors duration-300">
+        <div className="text-base font-bold text-white/90 group-hover:text-white transition-colors duration-300">
           {link.name}
         </div>
-        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 group-hover:text-white/40 transition-colors duration-300">
+        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 group-hover:text-white/60 transition-colors duration-300">
           {link.label}
         </div>
       </div>
@@ -145,7 +145,14 @@ const SocialLinkCard = ({ link, index }: { link: SocialLink; index: number }) =>
 
 const Contact = () => {
   return (
-    <section id="contact" className="section-padding relative overflow-hidden bg-base-950">
+    <motion.section
+      id="contact"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className="section-padding relative overflow-hidden bg-base-950"
+    >
       {/* ── Background decorative orbs ─────────────────────── */}
       <div
         className="absolute top-[10%] -left-40 w-[30rem] h-[30rem] rounded-full opacity-[0.08] pointer-events-none"
@@ -153,6 +160,7 @@ const Contact = () => {
           background:
             'radial-gradient(circle, rgba(6,182,212,0.20) 0%, transparent 70%)',
           filter: 'blur(120px)',
+          animation: 'hue-shift 14s ease-in-out infinite',
         }}
         aria-hidden
       />
@@ -162,6 +170,7 @@ const Contact = () => {
           background:
             'radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%)',
           filter: 'blur(100px)',
+          animation: 'hue-shift 12s ease-in-out infinite reverse',
         }}
         aria-hidden
       />
@@ -171,12 +180,22 @@ const Contact = () => {
           background:
             'radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%)',
           filter: 'blur(80px)',
+          animation: 'hue-shift 10s ease-in-out infinite',
         }}
         aria-hidden
       />
 
       {/* Dot grid overlay */}
       <div className="absolute inset-0 dot-grid opacity-20" aria-hidden />
+
+      {/* Floating decorative dots */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute w-2 h-2 rounded-full bg-neon-cyan/4 top-[15%] left-[8%] animate-float-dot" style={{ animationDelay: '0s', animationDuration: '7.5s' }} />
+        <div className="absolute w-1.5 h-1.5 rounded-full bg-neon-violet/5 top-[25%] right-[12%] animate-float-dot" style={{ animationDelay: '1.8s', animationDuration: '8.5s' }} />
+        <div className="absolute w-1 h-1 rounded-full bg-neon-blue/4 bottom-[20%] left-[15%] animate-float-dot" style={{ animationDelay: '2.2s', animationDuration: '9s' }} />
+        <div className="absolute w-[3px] h-[3px] rounded-full bg-white/4 bottom-[35%] right-[20%] animate-float-dot" style={{ animationDelay: '0.9s', animationDuration: '6s' }} />
+        <div className="absolute w-2 h-2 rounded-full bg-neon-cyan/3 top-[55%] left-[5%] animate-float-dot" style={{ animationDelay: '3.6s', animationDuration: '11s' }} />
+      </div>
 
       <div className="section-container relative z-10">
         {/* ── Header ────────────────────────────────────────── */}
@@ -212,7 +231,7 @@ const Contact = () => {
             className="space-y-8"
           >
             {/* Description */}
-            <p className="text-white/60 text-lg leading-relaxed">
+            <p className="text-white/75 text-xl leading-relaxed">
               Open to research collaborations, internship opportunities, and
               innovative projects at the intersection of AI and robotics.
             </p>
@@ -222,13 +241,13 @@ const Contact = () => {
               <div className="relative w-12 h-12 min-w-[3rem] rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center transition-all duration-300 group-hover:border-accent-cyan/25 group-hover:bg-accent-cyan/5">
                 {/* Pulse ring */}
                 <span className="absolute inset-0 rounded-xl animate-ping opacity-20 bg-accent-cyan/30" />
-                <MapPin size={20} className="text-white/50 group-hover:text-accent-cyan transition-colors duration-300 relative z-10" />
+                <MapPin size={20} className="text-white/65 group-hover:text-accent-cyan transition-colors duration-300 relative z-10" />
               </div>
               <div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30">
+                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">
                   Location
                 </div>
-                <div className="text-white/60 group-hover:text-white/80 transition-colors duration-300">
+                <div className="text-white/75 group-hover:text-white/90 transition-colors duration-300">
                   Cairo, Egypt &middot; Available Globally
                 </div>
               </div>
@@ -236,7 +255,7 @@ const Contact = () => {
 
             {/* Social Links */}
             <div className="space-y-4">
-              <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 flex items-center gap-3">
+              <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 flex items-center gap-3">
                 <span className="w-5 h-px bg-white/10" />
                 Connect
               </div>
@@ -275,7 +294,7 @@ const Contact = () => {
                   <h3 className="text-2xl md:text-3xl font-black uppercase tracking-ultra text-white mb-3">
                     Ready to Collaborate?
                   </h3>
-                  <p className="text-white/40 text-sm md:text-base leading-relaxed max-w-sm mx-auto">
+                  <p className="text-white/60 text-sm md:text-base leading-relaxed max-w-sm mx-auto">
                     Let&apos;s discuss how we can work together on groundbreaking
                     AI research.
                   </p>
@@ -313,7 +332,7 @@ const Contact = () => {
           </motion.div>
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

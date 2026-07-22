@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useInView } from 'framer-motion';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useSyncExternalStore } from 'react';
 import { useTiltEffect } from '@/hooks/useTiltEffect';
 import { staggerContainer, scaleIn } from '@/components/animations';
 import {
@@ -15,6 +15,18 @@ import {
   Users,
 } from 'lucide-react';
 import SplitText from '@/components/SplitText';
+
+function subscribeToReducedMotion(cb: () => void) {
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+}
+function getReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+function getReducedMotionServer() {
+  return false;
+}
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -75,9 +87,11 @@ const researchStats: StatItem[] = [
 // ─── Animated Counter Hook ──────────────────────────────────────────────
 
 const useAnimatedCounter = (target: number, duration = 2200) => {
-  const prefersReduced =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReduced = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotion,
+    getReducedMotionServer,
+  );
   const [count, setCount] = useState(prefersReduced ? target : 0);
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
@@ -192,7 +206,7 @@ const ResearchAreaCard = ({ area, index }: { area: ResearchArea; index: number }
           <h3 className="text-xl font-black uppercase tracking-ultra text-white mb-3 group-hover:text-gradient transition-all duration-300">
             {area.title}
           </h3>
-          <p className="text-white/50 text-base leading-relaxed group-hover:text-white/60 transition-colors duration-300">
+          <p className="text-white/65 text-lg leading-relaxed group-hover:text-white/75 transition-colors duration-300">
             {area.description}
           </p>
         </div>
@@ -242,13 +256,13 @@ const ResearchStatCard = ({
 
         <span
           ref={ref}
-          className="text-3xl md:text-4xl font-black tracking-ultra leading-none text-gradient"
+          className="text-4xl md:text-5xl font-black tracking-ultra leading-none text-gradient"
         >
           {count}
           {stat.suffix}
         </span>
 
-        <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 mt-2">
+        <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 mt-2">
           {stat.label}
         </div>
       </div>
@@ -260,8 +274,12 @@ const ResearchStatCard = ({
 
 const Labs = () => {
   return (
-    <section
+    <motion.section
       id="labs"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       className="section-padding relative overflow-hidden bg-base-950"
     >
       {/* ── Background Decorative Elements ──────────────────────── */}
@@ -269,13 +287,22 @@ const Labs = () => {
         {/* Dot grid */}
         <div className="absolute inset-0 dot-grid opacity-[0.12]" />
 
-        {/* Gradient orbs */}
+        {/* Floating decorative dots */}
+        <div className="absolute w-1.5 h-1.5 rounded-full bg-neon-cyan/5 top-[15%] left-[12%] animate-float-dot" style={{ animationDelay: '0s', animationDuration: '7s' }} />
+        <div className="absolute w-2 h-2 rounded-full bg-neon-violet/4 top-[30%] right-[18%] animate-float-dot" style={{ animationDelay: '1.2s', animationDuration: '9s' }} />
+        <div className="absolute w-1 h-1 rounded-full bg-neon-blue/5 bottom-[25%] left-[25%] animate-float-dot" style={{ animationDelay: '2.5s', animationDuration: '8s' }} />
+        <div className="absolute w-[3px] h-[3px] rounded-full bg-neon-cyan/4 bottom-[35%] right-[30%] animate-float-dot" style={{ animationDelay: '0.8s', animationDuration: '10s' }} />
+        <div className="absolute w-1.5 h-1.5 rounded-full bg-white/3 top-[60%] left-[8%] animate-float-dot" style={{ animationDelay: '3.2s', animationDuration: '6.5s' }} />
+        <div className="absolute w-2 h-2 rounded-full bg-neon-violet/3 top-[10%] right-[35%] animate-float-dot" style={{ animationDelay: '1.8s', animationDuration: '8.5s' }} />
+
+        {/* Gradient orbs with hue-shift animation */}
         <div
           className="absolute top-[10%] -right-32 w-[30rem] h-[30rem] rounded-full opacity-[0.10]"
           style={{
             background:
               'radial-gradient(circle, rgba(6,182,212,0.18) 0%, transparent 70%)',
             filter: 'blur(100px)',
+            animation: 'hue-shift 12s ease-in-out infinite',
           }}
         />
         <div
@@ -284,6 +311,7 @@ const Labs = () => {
             background:
               'radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 70%)',
             filter: 'blur(80px)',
+            animation: 'hue-shift 15s ease-in-out infinite reverse',
           }}
         />
         <div
@@ -292,6 +320,7 @@ const Labs = () => {
             background:
               'radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%)',
             filter: 'blur(60px)',
+            animation: 'hue-shift 10s ease-in-out infinite',
           }}
         />
 
@@ -360,7 +389,7 @@ const Labs = () => {
           ))}
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

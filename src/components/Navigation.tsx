@@ -155,7 +155,7 @@ function DesktopNavLink({
         href={href}
         onClick={onClick}
         ariaLabel={`Navigate to ${label}`}
-        className="text-[11px] font-bold uppercase tracking-[0.28em] text-white/40 hover:text-white transition-colors duration-200 py-1"
+        className="text-[11px] font-bold uppercase tracking-[0.28em] text-white/60 hover:text-white transition-colors duration-200 py-1"
       >
         <span>{label}</span>
         <Underline />
@@ -440,7 +440,7 @@ const Navigation = () => {
             </motion.button>
 
             {/* Mobile nav items with staggered letter animation */}
-            <div className="flex flex-col items-center gap-3 sm:gap-4 -mt-12 sm:-mt-16 [&_a_span_span]:text-5xl sm:[&_a_span_span]:text-7xl md:[&_a_span_span]:text-8xl [&_a_span_span]:font-black [&_a_span_span]:uppercase [&_a_span_span]:tracking-ultra [&_a_span_span]:text-white/80 [&_a_span_span]:hover:text-accent-cyan [&_a_span_span]:transition-colors [&_a_span_span]:duration-300">
+            <div className="flex flex-col items-center gap-3 sm:gap-4 -mt-12 sm:-mt-16 [&_a_span_span]:text-5xl sm:[&_a_span_span]:text-7xl md:[&_a_span_span]:text-8xl [&_a_span_span]:font-black [&_a_span_span]:uppercase [&_a_span_span]:tracking-ultra [&_a_span_span]:text-white/90 [&_a_span_span]:hover:text-accent-cyan [&_a_span_span]:transition-colors [&_a_span_span]:duration-300">
               {NAV_LINKS.map((item, i) => {
                 const href = item === 'Home' ? undefined : `#${item.toLowerCase()}`;
                 return (

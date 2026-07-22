@@ -49,7 +49,7 @@ const BackToTop = () => {
             'flex items-center justify-center',
             'border border-white/[0.08]',
             'bg-black/60 backdrop-blur-xl',
-            'text-white/60 hover:text-neon-cyan',
+            'text-white/75 hover:text-neon-cyan',
             'hover:border-neon-cyan/30',
             'hover:shadow-[0_0_20px_rgba(6,182,212,0.15)]',
             'transition-colors duration-300',

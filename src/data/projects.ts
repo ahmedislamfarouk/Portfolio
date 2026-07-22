@@ -15,7 +15,7 @@ export const projects: Project[] = [
   {
     title: "Renal Rejection AI",
     category: "Medical Diagnostics / Deep Learning",
-    image: "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200",
+    image: "/projects/project-1.jpg",
     stats: "3rd Place @ R!L",
     year: "2024",
     description: "A non-invasive approach to classify renal rejection grades in kidney transplant patients. Developed during a research internship at the University of Louisville bioengineering labs.",
@@ -32,7 +32,7 @@ export const projects: Project[] = [
   {
     title: "Autonomous Fleet",
     category: "Robotics / Perception",
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200",
+    image: "/projects/project-2.jpg",
     stats: "YOLOv8 + ROS 2",
     year: "2024",
     description: "Developed a ROS 2–based perception and control system for autonomous golf cart navigation at James Madison University.",
@@ -49,7 +49,7 @@ export const projects: Project[] = [
   {
     title: "SkyVision Swarm",
     category: "Multi-Agent Systems / Fusion",
-    image: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=1200",
+    image: "/projects/project-3.jpg",
     stats: "Real-time Fusion",
     year: "2024",
     description: "AI-powered aerial monitoring and vision system designed for real-time environmental analysis using drone swarms. Collaboration with JMU.",
@@ -66,7 +66,7 @@ export const projects: Project[] = [
   {
     title: "Intelligent Assets",
     category: "LLM / Semantic Search",
-    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc51?w=1200",
+    image: "/projects/project-4.jpg",
     stats: "BERT + RAG",
     year: "2024",
     description: "LLM-powered semantic search platform and microservices architecture for asset retrieval, developed as part of a Virginia Tech capstone.",
@@ -83,7 +83,7 @@ export const projects: Project[] = [
   {
     title: "Emotion Recog",
     category: "Multimodal AI (SER & FER)",
-    image: "https://images.unsplash.com/photo-1527433270404-21b12746a108?w=1200",
+    image: "/projects/project-5.jpg",
     stats: "SER + FER Fusion",
     year: "2024",
     description: "Comprehensive AI framework focused on Speech Emotion Recognition (SER) and Facial Emotion Recognition (FER) systems.",
@@ -100,7 +100,7 @@ export const projects: Project[] = [
   {
     title: "Sobriety Detection",
     category: "Computer Vision / Health",
-    image: "https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?w=1200",
+    image: "/projects/project-6.jpg",
     stats: "JMU Research",
     year: "2024",
     description: "Specialized AI platform built to detect intoxication levels through non-invasive facial recognition and behavioral analysis.",
@@ -117,7 +117,7 @@ export const projects: Project[] = [
   {
     title: "Egyptian Museum App",
     category: "EdTech / NLP",
-    image: "https://images.unsplash.com/photo-1503174971373-b1f69850bbd6?w=1200",
+    image: "/projects/project-7.jpg",
     stats: "3rd Place @ Hackathon",
     year: "2024",
     description: "Innovative application designed to revitalize the visitor experience in Egyptian museums through interactive AI technology.",
@@ -134,7 +134,7 @@ export const projects: Project[] = [
   {
     title: "Snake Game AI",
     category: "Reinforcement Learning",
-    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200",
+    image: "/projects/project-8.jpg",
     stats: "Q-Learning / DQN",
     year: "2023",
     description: "Enhanced version of the classic Snake game featuring AI-driven opponents and real-time multiplayer gameplay.",
@@ -151,7 +151,7 @@ export const projects: Project[] = [
   {
     title: "Nomeda",
     category: "AI Startup",
-    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200",
+    image: "/projects/project-9.jpg",
     stats: "Founder",
     year: "2024",
     description: "Innovative venture focused on integrating cutting-edge AI with modern software engineering practices to solve complex digital challenges.",

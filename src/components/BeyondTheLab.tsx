@@ -11,9 +11,21 @@ import {
   Crosshair,
   Star,
 } from 'lucide-react';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useSyncExternalStore } from 'react';
 import { achievementStats } from '@/data/stats';
 import SplitText from '@/components/SplitText';
+
+function subscribeToReducedMotion(cb: () => void) {
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+}
+function getReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+function getReducedMotionServer() {
+  return false;
+}
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -36,9 +48,11 @@ interface Principle {
 // ─── Animated Counter Hook ──────────────────────────────────────────────
 
 const useAnimatedCounter = (target: number, duration = 2200) => {
-  const prefersReduced =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReduced = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotion,
+    getReducedMotionServer,
+  );
   const [count, setCount] = useState(prefersReduced ? target : 0);
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
@@ -330,7 +344,13 @@ const BeyondTheLab = () => {
         }}
       />
 
-      <div className="section-container relative z-10">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, margin: '-40px' }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="section-container relative z-10"
+      >
         {/* ── Header ────────────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -385,7 +405,7 @@ const BeyondTheLab = () => {
               </p>
             </blockquote>
 
-            <p className="text-white/50 text-base md:text-lg leading-relaxed">
+            <p className="text-white/65 text-lg md:text-xl leading-relaxed">
               Ahmed Badr is a 3rd Dan Black Belt and Egyptian National Team
               member with 43 international medals. The same precision,
               resilience, and discipline that define his Taekwondo career
@@ -426,7 +446,7 @@ const BeyondTheLab = () => {
                     <h4 className="text-sm font-black uppercase tracking-wider text-white mb-1 group-hover:text-gradient-cyan-violet transition-all duration-300">
                       {principle.title}
                     </h4>
-                    <p className="text-white/40 text-sm leading-relaxed group-hover:text-white/50 transition-colors duration-300">
+                    <p className="text-white/60 text-sm leading-relaxed group-hover:text-white/70 transition-colors duration-300">
                       {principle.description}
                     </p>
                   </div>
@@ -452,7 +472,7 @@ const BeyondTheLab = () => {
 
             {/* Achievements list — no emojis, all Lucide SVG icons */}
             <div className="bento-card !rounded-2xl p-6">
-              <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 mb-5">
+              <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 mb-5">
                 Top Achievements
               </h4>
               <ul className="space-y-4">
@@ -495,10 +515,10 @@ const BeyondTheLab = () => {
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-bold text-white/80 group-hover:text-white transition-colors duration-300">
+                        <div className="text-sm font-bold text-white/90 group-hover:text-white transition-colors duration-300">
                           {achievement.text}
                         </div>
-                        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 group-hover:text-white/40 transition-colors duration-300">
+                        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 group-hover:text-white/60 transition-colors duration-300">
                           {achievement.date}
                         </div>
                       </div>
@@ -550,18 +570,18 @@ const BeyondTheLab = () => {
 
             {/* Content */}
             <div className="relative rounded-3xl bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-sm p-8 md:p-10 flex flex-col items-center gap-5">
-              <div className="flex items-center gap-3 text-white/50">
+              <div className="flex items-center gap-3 text-white/65">
                 <Swords size={16} className="text-accent-cyan/60" />
                 <span className="text-[9px] font-bold uppercase tracking-[0.35em]">
                   The Champion&apos;s Code
                 </span>
                 <Crosshair size={16} className="text-accent-cyan/60" />
               </div>
-              <p className="text-lg md:text-xl text-white/80 font-bold max-w-xl">
+              <p className="text-lg md:text-xl text-white/90 font-bold max-w-xl">
                 15 years of Taekwondo discipline meet cutting-edge AI
                 research.
                 <br />
-                <span className="text-white/40 font-normal">
+                <span className="text-white/60 font-normal">
                   Same mindset. Different arena.
                 </span>
               </p>
@@ -575,7 +595,7 @@ const BeyondTheLab = () => {
             </div>
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 };

@@ -1,13 +1,27 @@
 'use client';
 
 import { useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useSyncExternalStore } from 'react';
+
+function subscribeToReducedMotion(cb: () => void) {
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+}
+
+function getReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function getReducedMotionServer() {
+  return false;
+}
 
 interface TiltOptions {
-  scale?: number;      // hover scale (default: 1.02)
-  rotation?: number;   // max rotation degrees (default: 8)
-  springStiffness?: number;  // (default: 250)
-  springDamping?: number;    // (default: 20)
+  scale?: number;
+  rotation?: number;
+  springStiffness?: number;
+  springDamping?: number;
 }
 
 export function useTiltEffect<T extends HTMLElement>(options: TiltOptions = {}) {
@@ -19,12 +33,11 @@ export function useTiltEffect<T extends HTMLElement>(options: TiltOptions = {}) 
   } = options;
 
   const ref = useRef<T>(null);
-
-  // Respect prefers-reduced-motion — disable tilt when user prefers reduced motion.
-  // Check only on the client to avoid SSR issues.
-  const prefersReducedMotion =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReducedMotion = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotion,
+    getReducedMotionServer,
+  );
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
