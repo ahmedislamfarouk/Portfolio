@@ -419,6 +419,33 @@
     @apply px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-white/65;
   }
 
+  /* ── Cursor Spotlight — radial gradient following mouse ─── */
+  .spotlight-card {
+    position: relative;
+  }
+  .spotlight-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      600px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+      rgba(6, 182, 212, 0.06),
+      transparent 40%
+    );
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .spotlight-card:hover::before {
+    opacity: 1;
+  }
+  .spotlight-card:hover {
+    --spotlight-x: 50%;
+    --spotlight-y: 50%;
+  }
+
   /* ── Cursor Blink ──────────────────────────────────────── */
   .cursor {
     @apply inline-block w-0.5 h-[1em] bg-accent-cyan ml-1 align-middle;

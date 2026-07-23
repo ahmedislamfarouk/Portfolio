@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState, useEffect, useSyncExternalStore } from 'react';
 import { useTiltEffect } from '@/hooks/useTiltEffect';
+import { useMouseSpotlight } from '@/hooks/useMouseSpotlight';
 import { staggerContainer, scaleIn } from '@/components/animations';
 import {
   Eye,
@@ -154,9 +155,11 @@ const ResearchAreaCard = ({ area, index }: { area: ResearchArea; index: number }
     scale: 1,
     rotation: 5,
   });
+  const { handlers: spotlightHandlers } = useMouseSpotlight<HTMLDivElement>();
 
   return (
     <motion.div
+      {...spotlightHandlers}
       ref={ref}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
@@ -170,7 +173,7 @@ const ResearchAreaCard = ({ area, index }: { area: ResearchArea; index: number }
         duration: 0.6,
         ease: [0.16, 1, 0.3, 1],
       }}
-      className="bento-card group relative"
+      className="bento-card group relative spotlight-card"
     >
       {/* Animated gradient border on hover */}
       <AnimatedBorder />
@@ -230,9 +233,11 @@ const ResearchStatCard = ({
     scale: 1,
     rotation: 5,
   });
+  const { handlers: spotlightHandlers } = useMouseSpotlight<HTMLDivElement>();
 
   return (
     <motion.div
+      {...spotlightHandlers}
       ref={tiltRef}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
@@ -246,7 +251,7 @@ const ResearchStatCard = ({
         duration: 0.6,
         ease: [0.16, 1, 0.3, 1],
       }}
-      className="bento-card p-6 md:p-8 text-center group relative"
+      className="bento-card p-6 md:p-8 text-center group relative spotlight-card"
     >
       <AnimatedBorder />
       <div className="relative z-10">

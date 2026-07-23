@@ -5,6 +5,7 @@ import { ArrowUpRight, X, ExternalLink } from 'lucide-react';
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { projects, type Project } from '@/data/projects';
 import { useTiltEffect } from '@/hooks/useTiltEffect';
+import { useMouseSpotlight } from '@/hooks/useMouseSpotlight';
 import { staggerContainer, fadeSlideUp } from '@/components/animations';
 import SplitText from '@/components/SplitText';
 
@@ -186,10 +187,14 @@ const ProjectCard = ({
     rotation: 10,
   });
 
+  const { ref: spotlightRef, handlers: spotlightHandlers } = useMouseSpotlight<HTMLDivElement>();
+
   const statusStyle = STATUS_STYLES[project.status];
 
   return (
     <motion.article
+      ref={spotlightRef}
+      {...spotlightHandlers}
       variants={fadeSlideUp}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -199,7 +204,7 @@ const ProjectCard = ({
         duration: 0.6,
         ease: [0.16, 1, 0.3, 1],
       }}
-      className={featured ? 'md:col-span-2' : ''}
+      className={`${featured ? 'md:col-span-2' : ''} spotlight-card`}
       onClick={onClick}
       onKeyDown={(e) => e.key === 'Enter' && onClick()}
       tabIndex={0}

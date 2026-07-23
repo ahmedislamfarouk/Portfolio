@@ -8,6 +8,7 @@ import {
 } from 'framer-motion';
 import { useRef } from 'react';
 import { useTiltEffect } from '@/hooks/useTiltEffect';
+import { useMouseSpotlight } from '@/hooks/useMouseSpotlight';
 import type { Easing } from 'framer-motion';
 import {
   Brain,
@@ -244,6 +245,8 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
     rotation: 3,
   });
 
+  const { handlers: spotlightHandlers } = useMouseSpotlight<HTMLDivElement>();
+
   return (
       <motion.div
         variants={containerVariants}
@@ -353,11 +356,12 @@ const TimelineEntryCard = ({ entry, index, isLast }: TimelineEntryCardProps) => 
 
         {/* Glass card with neon left-border accent */}
         <motion.div
+          {...spotlightHandlers}
           ref={glassRef}
           onMouseMove={glassMouseMove}
           onMouseLeave={glassMouseLeave}
           style={glassStyle}
-          className="glass-card group/card relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_-8px_rgba(6,182,212,0.25)]"
+          className="glass-card group/card relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_-8px_rgba(6,182,212,0.25)] spotlight-card"
         >
           {/* Neon left-border accent */}
           <span

@@ -4,6 +4,7 @@ import { motion, useInView } from 'framer-motion';
 import { Trophy, Medal, Award, Star, Sparkles } from 'lucide-react';
 import { useRef, useState, useEffect, useSyncExternalStore } from 'react';
 import { useTiltEffect } from '@/hooks/useTiltEffect';
+import { useMouseSpotlight } from '@/hooks/useMouseSpotlight';
 import { staggerContainer, fadeSlideUp } from '@/components/animations';
 import SplitText from '@/components/SplitText';
 
@@ -277,9 +278,11 @@ const AwardCard = ({
     scale: 1,
     rotation: 6,
   });
+  const { handlers: spotlightHandlers } = useMouseSpotlight<HTMLDivElement>();
 
   return (
     <motion.article
+      {...spotlightHandlers}
       variants={fadeSlideUp}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -289,7 +292,7 @@ const AwardCard = ({
         duration: 0.6,
         ease: [0.16, 1, 0.3, 1],
       }}
-      className="group cursor-pointer"
+      className="group cursor-pointer spotlight-card"
     >
       <motion.div
         ref={ref}
