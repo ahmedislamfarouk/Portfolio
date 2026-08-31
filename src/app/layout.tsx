@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import CustomCursor from '@/components/CustomCursor';
-import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 
 export const metadata: Metadata = {
   title: 'Ahmed Badr | AI Researcher & Robotics Engineer',
   description:
-    'Engineering the nexus of sentient vision and autonomous control. SOTA research meets championship-level execution. Cyberpunk UI · Neon Aesthetics · Next.js 15.',
+    'Engineering the nexus of sentient vision and autonomous control. SOTA research meets championship-level execution.',
   keywords: [
     'Ahmed Badr',
     'AI Researcher',
@@ -17,9 +15,7 @@ export const metadata: Metadata = {
     'Autonomous Systems',
     'Sensor Fusion',
     'Reinforcement Learning',
-    'Taekwondo Champion',
     'Portfolio',
-    'Cyberpunk',
   ],
   authors: [{ name: 'Ahmed Badr' }],
   openGraph: {
@@ -43,10 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <SmoothScrollProvider>
-          <CustomCursor />
-          {children}
-        </SmoothScrollProvider>
+        {children}
       </body>
     </html>
   );
