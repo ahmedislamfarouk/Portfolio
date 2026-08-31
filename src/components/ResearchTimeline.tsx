@@ -590,7 +590,7 @@ const ResearchTimeline = () => {
 
   return (
     <section
-      id="timeline"
+      id="experience"
       ref={sectionRef}
       className="section-padding relative overflow-hidden"
     >

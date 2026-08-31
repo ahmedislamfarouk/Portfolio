@@ -11,7 +11,7 @@ import { Menu, X, Download } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 // ─── Constants ───────────────────────────────────────────
-const NAV_LINKS = ['Home', 'About', 'Projects', 'Labs', 'Awards', 'Contact'] as const;
+const NAV_LINKS = ['Home', 'Projects', 'About', 'Experience', 'Contact'] as const;
 
 const SCROLL_THRESHOLD = 40;
 
