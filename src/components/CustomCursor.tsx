@@ -33,13 +33,7 @@ const RING_SPRING = { stiffness: 180, damping: 22, mass: 0.3 };
 
 // ─── CustomCursor ────────────────────────────────────────────────
 const CustomCursor = () => {
-  const [isActive, setIsActive] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    const mqReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (mqReduced.matches) return false;
-    const mqPointer = window.matchMedia('(pointer: fine)');
-    return mqPointer.matches;
-  });
+  const [isActive, setIsActive] = useState(false);
   const [variant, setVariant] = useState<CursorVariant>('default');
   const [isPressed, setIsPressed] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
@@ -70,11 +64,17 @@ const CustomCursor = () => {
     isPressedRef.current = isPressed;
   }, [isPressed]);
 
-  // ─── Capability detection — listen for device changes (e.g. user plugs in mouse) ──
+  // ─── Capability detection — set active after mount to avoid hydration mismatch ──
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    const mqReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mqReduced.matches) return;
+
     const mqPointer = window.matchMedia('(pointer: fine)');
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time initialization after mount
+    setIsActive(mqPointer.matches);
+
     const handlePointerChange = (e: MediaQueryListEvent) => {
       setIsActive(e.matches);
     };
