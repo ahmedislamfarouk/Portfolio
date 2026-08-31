@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import CursorFollower from '@/components/CursorFollower';
+import CustomCursor from '@/components/CustomCursor';
+import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 
 export const metadata: Metadata = {
   title: 'Ahmed Badr | AI Researcher & Robotics Engineer',
@@ -40,10 +41,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <body className="antialiased">
-        <CursorFollower />
-        {children}
+        <SmoothScrollProvider>
+          <CustomCursor />
+          {children}
+        </SmoothScrollProvider>
       </body>
     </html>
   );

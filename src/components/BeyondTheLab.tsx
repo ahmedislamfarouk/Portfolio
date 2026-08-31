@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useRef, useState, useEffect, useSyncExternalStore } from 'react';
 import { achievementStats } from '@/data/stats';
+import ScrollReveal from '@/components/ScrollReveal';
 import SplitText from '@/components/SplitText';
 
 function subscribeToReducedMotion(cb: () => void) {
@@ -352,23 +353,19 @@ const BeyondTheLab = () => {
         className="section-container relative z-10"
       >
         {/* ── Header ────────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-16 md:mb-20"
-        >
-          <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Discipline</SplitText>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
-            <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
-              Beyond
-            </SplitText>{' '}
-            <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient-cyan-violet">
-              the Lab
-            </SplitText>
-          </h2>
-        </motion.div>
+        <ScrollReveal direction="up" distance={30} duration={0.8}>
+          <div className="mb-16 md:mb-20">
+            <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Discipline</SplitText>
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
+              <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
+                Beyond
+              </SplitText>{' '}
+              <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient-cyan-violet">
+                the Lab
+              </SplitText>
+            </h2>
+          </div>
+        </ScrollReveal>
 
         {/* ── Main Grid (story left, stats right) ──────────────── */}
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-20">

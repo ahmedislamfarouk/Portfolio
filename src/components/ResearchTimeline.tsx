@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { timeline } from '@/data/timeline';
 import type { TimelineEntry } from '@/data/timeline';
+import ScrollReveal from '@/components/ScrollReveal';
 import SplitText from '@/components/SplitText';
 
 /* ------------------------------------------------------------------ */
@@ -666,27 +667,23 @@ const ResearchTimeline = () => {
         className="section-container relative z-10"
       >
         {/* ---- Section header ---- */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: EASE_OUT_QUART }}
-          className="mb-16 md:mb-20"
-        >
-          <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Timeline</SplitText>
-          <h2 className="mt-6 text-4xl font-black uppercase tracking-ultra md:text-6xl">
-            <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
-              Research
-            </SplitText>{' '}
-            <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
-              Journey
-            </SplitText>
-          </h2>
-          <p className="mt-4 max-w-xl text-sm md:text-base text-white/50 font-medium tracking-wide leading-relaxed">
-            From academic foundations to cutting-edge research — a chronology of
-            discovery and impact.
-          </p>
-        </motion.div>
+        <ScrollReveal direction="up" distance={30} duration={0.8}>
+          <div className="mb-16 md:mb-20">
+            <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Timeline</SplitText>
+            <h2 className="mt-6 text-4xl font-black uppercase tracking-ultra md:text-6xl">
+              <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
+                Research
+              </SplitText>{' '}
+              <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
+                Journey
+              </SplitText>
+            </h2>
+            <p className="mt-4 max-w-xl text-sm md:text-base text-white/50 font-medium tracking-wide leading-relaxed">
+              From academic foundations to cutting-edge research — a chronology of
+              discovery and impact.
+            </p>
+          </div>
+        </ScrollReveal>
 
         {/* ---- Timeline entries with animated line ---- */}
         <div className="relative mx-auto max-w-3xl" ref={timelineRef}>

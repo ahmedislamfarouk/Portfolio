@@ -453,9 +453,31 @@
   }
 
   /* ── Section Spacing ──────────────────────────────────── */
-  .section-padding {
+  .section-spacing {
     padding-top: 6rem;
     padding-bottom: 6rem;
+  }
+
+  /* ── Lenis overrides ──────────────────────────────────── */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important; /* Lenis handles scrolling */
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  .lenis.lenis-scrolling iframe {
+    pointer-events: none;
   }
   @media (min-width: 768px) {
     .section-padding {
@@ -508,6 +530,21 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     animation: shimmer 4s linear infinite;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════
+   CUSTOM CURSOR — Hide default cursor on desktop
+   ═════════════════════════════════════════════════════════════ */
+@media (pointer: fine) {
+  html {
+    cursor: none !important;
+  }
+
+  a, button, [role="button"], input, textarea, select, label,
+  .btn-primary, .btn-ghost, .btn-icon, [data-cursor],
+  .cursor-pointer, .cursor-default {
+    cursor: none !important;
   }
 }
 

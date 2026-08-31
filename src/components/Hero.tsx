@@ -17,6 +17,12 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useState, useEffect, useRef, useMemo, useSyncExternalStore } from 'react';
+import dynamic from 'next/dynamic';
+
+const HeroScene = dynamic(() => import('@/components/three/HeroScene'), {
+  ssr: false,
+  loading: () => null,
+});
 
 // ═════════════════════════════════════════════════════════════════════
 //  Constants
@@ -901,7 +907,7 @@ const Hero = () => {
         ref={ref}
       className="relative flex items-center min-h-dvh pt-28"
       >
-        <WaveLight />
+        <HeroScene />
         <div className="absolute inset-0 dot-grid opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-base-950/40" />
 
@@ -1033,7 +1039,7 @@ const Hero = () => {
       className="relative flex items-center overflow-hidden min-h-dvh pt-28"
     >
       {/* ── Background layers ─────────────────────────────────── */}
-      <WaveLight />
+      <HeroScene />
 
       <div className="absolute inset-0 dot-grid opacity-30" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-base-950/40" />

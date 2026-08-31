@@ -60,6 +60,79 @@ function useEscape(handler: () => void, active: boolean) {
   }, [handler, active]);
 }
 
+/** Tracks the currently visible section for active nav indicator */
+function useActiveSection(): string {
+  const [active, setActive] = useState('Home');
+
+  useEffect(() => {
+    const sectionIds = NAV_LINKS.map((link) =>
+      link === 'Home' ? '__top' : link.toLowerCase(),
+    );
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find the first visible entry (closest to top)
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+        if (visible.length > 0) {
+          const id = visible[0].target.id;
+          if (id === '__top') {
+            setActive('Home');
+          } else {
+            // Map section id back to nav link label
+            const link = NAV_LINKS.find(
+              (l) => l.toLowerCase() === id,
+            );
+            if (link) setActive(link);
+          }
+        }
+      },
+      {
+        rootMargin: '-20% 0px -60% 0px',
+        threshold: 0,
+      },
+    );
+
+    // Observe all sections
+    sectionIds.forEach((id) => {
+      const el = id === '__top' ? document.body : document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  return active;
+}
+
+/** Smoothly scrolls to a section using Lenis if available, fallback to native */
+function smoothScrollTo(targetY: number) {
+  // Try Lenis first (global instance)
+  const lenis = (window as unknown as Record<string, unknown>).__lenis as
+    | { scrollTo: (target: number | string | Element, options?: { offset?: number; duration?: number }) => void }
+    | undefined;
+
+  if (lenis && typeof lenis.scrollTo === 'function') {
+    lenis.scrollTo(targetY, { duration: 1.6 });
+    return;
+  }
+
+  // Fallback to native smooth scroll
+  window.scrollTo({ top: targetY, behavior: 'smooth' });
+}
+
+/** Scrolls to a section by ID */
+function scrollToSection(id: string) {
+  const el = document.getElementById(id);
+  if (el) {
+    const offset = 80; // Nav height offset
+    const y = el.getBoundingClientRect().top + window.scrollY - offset;
+    smoothScrollTo(y);
+  }
+}
+
 // ─── Magnetic Link ───────────────────────────────────────
 function MagneticNavLink({
   href,
@@ -67,12 +140,14 @@ function MagneticNavLink({
   children,
   className = '',
   ariaLabel,
+  isActive = false,
 }: {
   href?: string;
   onClick?: () => void;
   children: React.ReactNode;
   className?: string;
   ariaLabel?: string;
+  isActive?: boolean;
 }) {
   const ref = useRef<HTMLAnchorElement>(null);
   const x = useMotionValue(0);
@@ -111,6 +186,14 @@ function MagneticNavLink({
       className={`relative cursor-pointer inline-flex items-center ${className}`}
     >
       {children}
+      {isActive && (
+        <motion.span
+          layoutId="nav-active-dot"
+          className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-accent-cyan"
+          style={{ boxShadow: '0 0 6px rgba(6,182,212,0.8)' }}
+          transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+        />
+      )}
     </motion.a>
   );
 }
@@ -139,11 +222,13 @@ function DesktopNavLink({
   href,
   onClick,
   index,
+  isActive,
 }: {
   label: string;
   href?: string;
   onClick?: () => void;
   index: number;
+  isActive: boolean;
 }) {
   return (
     <motion.div
@@ -155,7 +240,10 @@ function DesktopNavLink({
         href={href}
         onClick={onClick}
         ariaLabel={`Navigate to ${label}`}
-        className="text-[11px] font-bold uppercase tracking-[0.28em] text-white/60 hover:text-white transition-colors duration-200 py-1"
+        isActive={isActive}
+        className={`text-[11px] font-bold uppercase tracking-[0.28em] transition-colors duration-200 py-1 ${
+          isActive ? 'text-white' : 'text-white/60 hover:text-white'
+        }`}
       >
         <span>{label}</span>
         <Underline />
@@ -171,12 +259,14 @@ function MobileNavItem({
   onClick,
   linkIndex,
   prefersReduced,
+  isActive,
 }: {
   label: string;
   href?: string;
   onClick?: () => void;
   linkIndex: number;
   prefersReduced: boolean;
+  isActive: boolean;
 }) {
   const letters = label.split('');
 
@@ -201,7 +291,7 @@ function MobileNavItem({
           {letters.map((char, charIndex) => (
             <motion.span
               key={charIndex}
-              className="inline-block"
+              className={`inline-block ${isActive ? 'text-accent-cyan' : ''}`}
               initial={prefersReduced ? { y: 0, opacity: 1 } : { y: 100, opacity: 0 }}
               animate={
                 prefersReduced
@@ -231,6 +321,7 @@ const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const prefersReduced = usePrefersReducedMotion();
+  const activeSection = useActiveSection();
 
   // Scroll detection
   useEffect(() => {
@@ -264,15 +355,18 @@ const Navigation = () => {
     (item: string) => {
       closeMenu();
       if (item === 'Home') {
-        window.scrollTo({ top: 0, behavior: prefersReduced ? 'instant' : 'smooth' });
+        smoothScrollTo(0);
+      } else {
+        const sectionId = item.toLowerCase();
+        scrollToSection(sectionId);
       }
     },
-    [closeMenu, prefersReduced],
+    [closeMenu],
   );
 
   const handleLogoClick = useCallback(() => {
-    window.scrollTo({ top: 0, behavior: prefersReduced ? 'instant' : 'smooth' });
-  }, [prefersReduced]);
+    smoothScrollTo(0);
+  }, []);
 
   return (
     <header
@@ -292,8 +386,10 @@ const Navigation = () => {
       {/* ── Nav Pill ── */}
       <div className="max-w-[1400px] mx-auto w-full px-3 sm:px-5 md:px-8 pt-3 sm:pt-4 md:pt-5">
         <nav
-          className={`relative w-full rounded-2xl border border-white/[0.07] bg-black/75 backdrop-blur-2xl pointer-events-auto transition-all duration-500 ease-out will-change-transform ${
-            scrolled ? 'shadow-[0_8px_32px_rgba(0,0,0,0.6)]' : 'shadow-none'
+          className={`relative w-full rounded-2xl border pointer-events-auto transition-all duration-500 ease-out will-change-transform ${
+            scrolled
+              ? 'border-white/[0.10] bg-black/80 backdrop-blur-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_0_1px_rgba(6,182,212,0.04)]'
+              : 'border-white/[0.07] bg-black/75 backdrop-blur-2xl shadow-none'
           }`}
           style={{
             padding: scrolled ? '10px 18px' : '14px 22px',
@@ -361,6 +457,7 @@ const Navigation = () => {
                     href={href}
                     onClick={() => handleNavClick(item)}
                     index={i}
+                    isActive={activeSection === item}
                   />
                 );
               })}
@@ -388,6 +485,10 @@ const Navigation = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, ease: 'easeOut', delay: 0.15 }}
                 href="#contact"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick('Contact');
+                }}
                 className="hidden md:inline-flex items-center gap-1.5 px-5 py-2 bg-white text-black font-bold uppercase tracking-widest text-[9px] rounded-full transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.15)] active:scale-95 cursor-pointer"
                 aria-label="Get in touch"
               >
@@ -451,6 +552,7 @@ const Navigation = () => {
                     onClick={() => handleNavClick(item)}
                     linkIndex={i}
                     prefersReduced={prefersReduced}
+                    isActive={activeSection === item}
                   />
                 );
               })}
@@ -479,7 +581,10 @@ const Navigation = () => {
               </a>
               <a
                 href="#contact"
-                onClick={closeMenu}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick('Contact');
+                }}
                 className="flex items-center gap-2 px-7 py-3 bg-white text-black font-bold uppercase tracking-widest text-[10px] rounded-full transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.12)] cursor-pointer"
                 aria-label="Get in touch"
               >

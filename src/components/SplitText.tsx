@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import {
   motion,
   useInView,
@@ -387,8 +388,7 @@ const SplitText = ({
 
   // ─── Reduced motion: plain visible text (no animation) ────
   if (reducedMotion) {
-    const TagComponent = Tag as React.ElementType;
-    return <TagComponent className={className}>{text}</TagComponent>;
+    return <Tag className={className}>{text}</Tag>;
   }
 
   // Decide which state each letter should be in.
@@ -435,17 +435,16 @@ const SplitText = ({
     );
   });
 
-  const TagComponent = Tag as React.ElementType;
-
-  return (
-    <TagComponent
-      ref={containerRef as React.Ref<HTMLElement>}
-      className={className}
-    >
-      <span className={`inline-block ${wrapperClassName}`.trim()}>
-        {letterSpans}
-      </span>
-    </TagComponent>
+  // Use React.createElement to avoid TypeScript children type issues with dynamic tags
+  return React.createElement(
+    Tag,
+    {
+      ref: containerRef as React.Ref<HTMLElement>,
+      className,
+    },
+    <span className={`inline-block ${wrapperClassName}`.trim()}>
+      {letterSpans}
+    </span>,
   );
 };
 

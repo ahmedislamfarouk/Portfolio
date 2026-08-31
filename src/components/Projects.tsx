@@ -7,6 +7,7 @@ import { projects, type Project } from '@/data/projects';
 import { useTiltEffect } from '@/hooks/useTiltEffect';
 import { useMouseSpotlight } from '@/hooks/useMouseSpotlight';
 import { staggerContainer, fadeSlideUp } from '@/components/animations';
+import ScrollReveal from '@/components/ScrollReveal';
 import SplitText from '@/components/SplitText';
 
 /* ─────────────────────────────────────────────────────────────
@@ -204,7 +205,7 @@ const ProjectCard = ({
         duration: 0.6,
         ease: [0.16, 1, 0.3, 1],
       }}
-      className={`${featured ? 'md:col-span-2' : ''} spotlight-card`}
+      className={`${featured ? 'md:col-span-2' : ''} spotlight-card group/card`}
       onClick={onClick}
       onKeyDown={(e) => e.key === 'Enter' && onClick()}
       tabIndex={0}
@@ -667,12 +668,8 @@ const Projects = () => {
   }, []);
 
   return (
-    <motion.section
+    <section
       id="projects"
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       className="py-28 md:py-40 relative"
     >
       {/* Background ambient glow with hue-shift */}
@@ -689,38 +686,30 @@ const Projects = () => {
 
       <div className="max-w-[1400px] mx-auto w-full px-6 md:px-12 lg:px-20 relative z-10">
         {/* ── Header ────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-10"
-        >
-          <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Portfolio</SplitText>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
-            <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
-              Featured
-            </SplitText>{' '}
-            <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
-              Projects
-            </SplitText>
-          </h2>
-          <p className="text-white/25 text-sm md:text-base mt-4 max-w-lg leading-relaxed">
-            Research-driven AI, robotics, and NLP systems — from conception
-            through deployment.
-          </p>
-        </motion.div>
+        <ScrollReveal direction="up" distance={30} duration={0.8}>
+          <div className="mb-10">
+            <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Portfolio</SplitText>
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
+              <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
+                Featured
+              </SplitText>{' '}
+              <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
+                Projects
+              </SplitText>
+            </h2>
+            <p className="text-white/25 text-sm md:text-base mt-4 max-w-lg leading-relaxed">
+              Research-driven AI, robotics, and NLP systems — from conception
+              through deployment.
+            </p>
+          </div>
+        </ScrollReveal>
 
         {/* ── Filter Tabs ───────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.15, duration: 0.5 }}
-          className="mb-10"
-        >
-          <FilterTabs active={activeFilter} onChange={handleFilterChange} />
-        </motion.div>
+        <ScrollReveal direction="up" distance={20} duration={0.6} delay={0.15}>
+          <div className="mb-10">
+            <FilterTabs active={activeFilter} onChange={handleFilterChange} />
+          </div>
+        </ScrollReveal>
 
         {/* ── Bento Grid ────────────────────────────────────── */}
         <AnimatePresence mode="popLayout">
@@ -743,7 +732,7 @@ const Projects = () => {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: '-40px' }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7"
             >
               {/* Featured (spans 2 cols on desktop) */}
               {featuredProject && (
@@ -770,27 +759,23 @@ const Projects = () => {
         </AnimatePresence>
 
         {/* ── View All CTA ──────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="mt-16 text-center"
-        >
-          <a
-            href="https://github.com/ahmedislamfarouk"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-ghost group/cta"
-          >
-            <GithubIcon size={14} />
-            <span>View All on GitHub</span>
-            <ArrowUpRight
-              size={12}
-              className="opacity-0 -translate-x-1 group-hover/cta:opacity-100 group-hover/cta:translate-x-0 transition-all duration-300"
-            />
-          </a>
-        </motion.div>
+        <ScrollReveal direction="up" distance={20} duration={0.6} delay={0.3}>
+          <div className="mt-16 text-center">
+            <a
+              href="https://github.com/ahmedislamfarouk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-ghost group/cta"
+            >
+              <GithubIcon size={14} />
+              <span>View All on GitHub</span>
+              <ArrowUpRight
+                size={12}
+                className="opacity-0 -translate-x-1 group-hover/cta:opacity-100 group-hover/cta:translate-x-0 transition-all duration-300"
+              />
+            </a>
+          </div>
+        </ScrollReveal>
       </div>
 
       {/* ── Modal ──────────────────────────────────────────── */}
@@ -798,7 +783,7 @@ const Projects = () => {
         project={selectedProject}
         onClose={() => setSelectedProject(null)}
       />
-    </motion.section>
+    </section>
   );
 };
 

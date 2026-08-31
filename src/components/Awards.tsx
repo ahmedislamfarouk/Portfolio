@@ -6,6 +6,7 @@ import { useRef, useState, useEffect, useSyncExternalStore } from 'react';
 import { useTiltEffect } from '@/hooks/useTiltEffect';
 import { useMouseSpotlight } from '@/hooks/useMouseSpotlight';
 import { staggerContainer, fadeSlideUp } from '@/components/animations';
+import ScrollReveal from '@/components/ScrollReveal';
 import SplitText from '@/components/SplitText';
 
 function subscribeToReducedMotion(cb: () => void) {
@@ -368,12 +369,8 @@ const AwardCard = ({
 
 const Awards = () => {
   return (
-    <motion.section
+    <section
       id="awards"
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       className="section-padding relative overflow-hidden"
     >
       {/* Background ambient glow */}
@@ -399,32 +396,29 @@ const Awards = () => {
 
       <div className="section-container relative z-10">
         {/* ── Header ──────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-16 md:mb-20"
-        >
-          <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Recognition</SplitText>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
-            <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
-              Awards &amp;
-            </SplitText>{' '}
-            <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
-              Honors
-            </SplitText>
-          </h2>
-        </motion.div>
+        <ScrollReveal direction="up" distance={30} duration={0.8}>
+          <div className="mb-16 md:mb-20">
+            <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Recognition</SplitText>
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
+              <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
+                Awards &amp;
+              </SplitText>{' '}
+              <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
+                Honors
+              </SplitText>
+            </h2>
+          </div>
+        </ScrollReveal>
 
         {/* ── Stats Row ───────────────────────────────────── */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
-          className="grid md:grid-cols-3 gap-5 mb-16"
-        >
+        <ScrollReveal direction="up" distance={25} duration={0.8} delay={0.1}>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-40px' }}
+            className="grid md:grid-cols-3 gap-5 mb-16"
+          >
           {statsData.map((stat, i) => (
             <StatCard
               key={stat.label}
@@ -434,36 +428,36 @@ const Awards = () => {
               delay={0.2 + i * 0.12}
             />
           ))}
-        </motion.div>
+          </motion.div>
+        </ScrollReveal>
 
         {/* ── Awards Bento Grid ───────────────────────────── */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-5"
-        >
-          {awards.map((award, index) => (
-            <AwardCard key={`${award.title}-${award.year}`} award={award} index={index} />
-          ))}
-        </motion.div>
+        <ScrollReveal direction="up" distance={25} duration={0.8} delay={0.2}>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-40px' }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-5"
+          >
+            {awards.map((award, index) => (
+              <AwardCard key={`${award.title}-${award.year}`} award={award} index={index} />
+            ))}
+          </motion.div>
+        </ScrollReveal>
 
         {/* ── Bottom decorative spacer ────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-12 flex justify-center"
-        >
-          <div className="flex items-center gap-3 text-white/10">
-            <span className="w-12 h-px bg-white/10" />
-            <Sparkles size={12} />
-            <span className="w-12 h-px bg-white/10" />
+        <ScrollReveal direction="up" distance={15} duration={0.6} delay={0.4}>
+          <div className="mt-12 flex justify-center">
+            <div className="flex items-center gap-3 text-white/10">
+              <span className="w-12 h-px bg-white/10" />
+              <Sparkles size={12} />
+              <span className="w-12 h-px bg-white/10" />
+            </div>
           </div>
-        </motion.div>
+        </ScrollReveal>
       </div>
-    </motion.section>
+    </section>
   );
 };
 

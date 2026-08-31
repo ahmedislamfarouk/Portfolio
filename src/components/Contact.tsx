@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Send, ArrowUpRight, Sparkles } from 'lucide-react';
 import { staggerContainer, fadeSlideLeft, fadeSlideRight } from '@/components/animations';
+import ScrollReveal from '@/components/ScrollReveal';
 import SplitText from '@/components/SplitText';
 
 // ── Custom Social Icons (preserved from original) ─────────────
@@ -145,12 +146,8 @@ const SocialLinkCard = ({ link, index }: { link: SocialLink; index: number }) =>
 
 const Contact = () => {
   return (
-    <motion.section
+    <section
       id="contact"
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       className="section-padding relative overflow-hidden bg-base-950"
     >
       {/* ── Background decorative orbs ─────────────────────── */}
@@ -199,23 +196,19 @@ const Contact = () => {
 
       <div className="section-container relative z-10">
         {/* ── Header ────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-16 md:mb-20"
-        >
-          <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Get in Touch</SplitText>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
-            <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
-              Let&apos;s
-            </SplitText>{' '}
-            <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
-              Connect
-            </SplitText>
-          </h2>
-        </motion.div>
+        <ScrollReveal direction="up" distance={30} duration={0.8}>
+          <div className="mb-16 md:mb-20">
+            <SplitText animation="fadeUp" delay={0.02} duration={0.5} hoverEffect={null} as="span" className="section-label">Get in Touch</SplitText>
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-ultra mt-6">
+              <SplitText animation="fadeUp" delay={0.03} duration={0.6} hoverEffect="sway" as="span" once>
+                Let&apos;s
+              </SplitText>{' '}
+              <SplitText animation="fadeUp" delay={0.05} duration={0.7} hoverEffect="sway" as="span" once className="text-gradient">
+                Connect
+              </SplitText>
+            </h2>
+          </div>
+        </ScrollReveal>
 
         {/* ── Two-column layout ─────────────────────────────── */}
         <motion.div
@@ -271,7 +264,7 @@ const Contact = () => {
           <motion.div
             variants={fadeSlideRight}
           >
-            <div className="bento-card group relative overflow-hidden p-8 md:p-10 lg:p-12">
+            <div className="bento-card group relative overflow-hidden p-8 md:p-10 lg:p-12 bg-base-900/80 backdrop-blur-xl">
               <NeonBorderOverlay />
 
               {/* Inner glow */}
@@ -304,14 +297,17 @@ const Contact = () => {
                 <div className="space-y-3 pt-2">
                   <a
                     href="mailto:ahmed@nomeda.ai"
-                    className="btn-primary w-full justify-center group/btn cursor-pointer"
+                    className="btn-primary w-full justify-center group/btn cursor-pointer relative overflow-hidden"
                   >
-                    <Mail size={14} />
-                    <span>Send Message</span>
-                    <ArrowUpRight
-                      size={12}
-                      className="opacity-0 -translate-x-1 group-hover/btn:opacity-100 group-hover/btn:translate-x-0 transition-all duration-300"
-                    />
+                    <span className="relative z-10 flex items-center gap-2">
+                      <Mail size={14} />
+                      <span>Send Message</span>
+                      <ArrowUpRight
+                        size={12}
+                        className="opacity-0 -translate-x-1 group-hover/btn:opacity-100 group-hover/btn:translate-x-0 transition-all duration-300"
+                      />
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-neon-cyan/20 via-transparent to-neon-violet/20 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500" />
                   </a>
                   <a
                     href="/Ahmed_Badr_CV.pdf"
@@ -332,7 +328,7 @@ const Contact = () => {
           </motion.div>
         </motion.div>
       </div>
-    </motion.section>
+    </section>
   );
 };
 
