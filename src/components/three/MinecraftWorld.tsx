@@ -23,18 +23,6 @@ function seededRandom(seed: number): number {
   return x - Math.floor(x);
 }
 
-// ── Camera Path ───────────────────────────────────────────
-
-const CAMERA_WAYPOINTS = [
-  new THREE.Vector3(0, 6, 14),     // Start: looking at spawn
-  new THREE.Vector3(2, 4, 6),      // Move toward farm
-  new THREE.Vector3(-3, 3, -2),    // Move to mine
-  new THREE.Vector3(4, 4, -8),     // Move to enchanting
-  new THREE.Vector3(0, 3.5, -14),  // Move to nether portal
-];
-
-const LOOK_AHEAD_OFFSET = 0.02;
-
 // ── Sky Gradient ──────────────────────────────────────────
 
 function SkyGradient() {
@@ -546,65 +534,45 @@ function Pathways() {
   );
 }
 
-// ── Camera Controller ─────────────────────────────────────
+// ── Island Container (rotates on scroll) ──────────────────
 
-function CameraController({
+function IslandContainer({
+  children,
   scrollProgress,
 }: {
+  children: React.ReactNode;
   scrollProgress: React.RefObject<number>;
 }) {
-  const { camera } = useThree();
-  const path = useMemo(
-    () => new THREE.CatmullRomCurve3(CAMERA_WAYPOINTS, false, 'catmullrom', 0.5),
-    []
-  );
+  const groupRef = useRef<THREE.Group>(null!);
 
   useFrame(() => {
-    const t = scrollProgress.current;
-    const point = path.getPoint(t);
-    const lookAheadT = Math.min(t + LOOK_AHEAD_OFFSET, 1);
-    const lookAtPoint = path.getPoint(lookAheadT);
+    if (!groupRef.current) return;
+    // Rotate the entire island based on scroll (0 to 1 = 0 to 2PI)
+    groupRef.current.rotation.y = scrollProgress.current * Math.PI * 2;
+  });
 
-    camera.position.copy(point);
-    camera.lookAt(lookAtPoint);
+  return <group ref={groupRef}>{children}</group>;
+}
+
+// ── Camera Controller (fixed position, looks at island) ───
+
+function CameraController() {
+  const { camera } = useThree();
+
+  useFrame(() => {
+    // Camera stays in fixed position, looking at center of island
+    camera.position.set(0, 8, 20);
+    camera.lookAt(0, 0, 0);
   });
 
   return null;
 }
 
-// ── Steve on Path ─────────────────────────────────────────
+// ── Steve on Island (fixed position, rotates with island) ─
 
-function SteveOnPath({
-  scrollProgress,
-}: {
-  scrollProgress: React.RefObject<number>;
-}) {
-  const groupRef = useRef<THREE.Group>(null!);
-  const path = useMemo(
-    () => new THREE.CatmullRomCurve3(CAMERA_WAYPOINTS, false, 'catmullrom', 0.5),
-    []
-  );
-
-  useFrame(() => {
-    if (!groupRef.current) return;
-    const t = scrollProgress.current;
-    const lookAheadT = Math.min(t + 0.05, 1);
-    const lookAtPoint = path.getPoint(lookAheadT);
-
-    // Steve walks slightly ahead of camera
-    const steveT = Math.min(t + 0.03, 1);
-    const stevePoint = path.getPoint(steveT);
-
-    groupRef.current.position.set(stevePoint.x, stevePoint.y - 1.2, stevePoint.z);
-
-    // Face direction of movement
-    const direction = new THREE.Vector3().subVectors(lookAtPoint, stevePoint);
-    const angle = Math.atan2(direction.x, direction.z);
-    groupRef.current.rotation.y = angle;
-  });
-
+function SteveOnIsland() {
   return (
-    <group ref={groupRef}>
+    <group position={[0, 1.5, 6]}>
       <Steve position={[0, 0, 0]} />
     </group>
   );
@@ -714,7 +682,7 @@ function MinecraftScene({
   return (
     <>
       <color attach="background" args={['#87CEEB']} />
-      <fog attach="fog" args={['#87CEEB', 15, 45]} />
+      <fog attach="fog" args={['#87CEEB', 25, 60]} />
 
       <Lighting />
       <SkyGradient />
@@ -730,24 +698,31 @@ function MinecraftScene({
         speed={0.3}
       />
 
-      {/* Camera & Steve */}
-      <CameraController scrollProgress={scrollProgress} />
-      <SteveOnPath scrollProgress={scrollProgress} />
+      {/* Camera stays fixed, island rotates */}
+      <CameraController />
 
-      {/* World Areas */}
-      <SpawnPoint />
-      <FarmArea />
-      <MineArea />
-      <EnchantingRoom />
-      <NetherPortalArea />
+      {/* The entire island rotates on scroll */}
+      <IslandContainer scrollProgress={scrollProgress}>
+        {/* World Areas */}
+        <SpawnPoint />
+        <FarmArea />
+        <MineArea />
+        <EnchantingRoom />
+        <NetherPortalArea />
 
-      {/* Connecting paths */}
-      <Pathways />
+        {/* Connecting paths */}
+        <Pathways />
 
-      {/* Environment */}
+        {/* Steve stands on the island */}
+        <SteveOnIsland />
+
+        {/* Environment */}
+        <WaterBase />
+        <FloatingItems />
+      </IslandContainer>
+
+      {/* Clouds stay outside rotation */}
       <Clouds count={15} />
-      <WaterBase />
-      <FloatingItems />
     </>
   );
 }
@@ -807,10 +782,10 @@ export default function MinecraftWorld() {
         {isVisible && (
           <Canvas
             camera={{
-              fov: 60,
+              fov: 50,
               near: 0.1,
               far: 100,
-              position: CAMERA_WAYPOINTS[0].toArray(),
+              position: [0, 8, 20],
             }}
             dpr={[1, 1.5]}
             gl={{
@@ -837,7 +812,10 @@ export default function MinecraftWorld() {
         >
           <div className="flex flex-col gap-4 text-right">
             <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/40">
-              SCROLL TO EXPLORE
+              SCROLL TO ROTATE
+            </div>
+            <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/30">
+              THE ISLAND
             </div>
           </div>
         </div>
