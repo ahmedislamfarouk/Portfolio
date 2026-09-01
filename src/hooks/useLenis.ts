@@ -2,14 +2,20 @@
 
 import { useEffect } from 'react';
 import Lenis from '@studio-freight/lenis';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 /**
  * Initializes Lenis smooth scrolling on the client.
  *
  * - Respects `prefers-reduced-motion: reduce` — disables smooth scroll entirely.
+ * - Integrates with GSAP ScrollTrigger via Lenis's RAF bridge.
  * - Exposes the Lenis instance on `window.__lenis` for cross-component use.
  * - Cleans up the Lenis instance and RAF loop on unmount.
- * - Integrates with GSAP ScrollTrigger via Lenis's `requestAnimationFrame` bridge.
  */
 export function useLenis() {
   useEffect(() => {
@@ -28,15 +34,21 @@ export function useLenis() {
     // Expose for cross-component smooth scrolling (e.g. Navigation)
     (window as unknown as Record<string, unknown>).__lenis = lenis;
 
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
+    // Connect Lenis to GSAP ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
 
-    const frameId = requestAnimationFrame(raf);
+    // Use GSAP ticker for RAF — this keeps Lenis and ScrollTrigger in sync
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+
+    // Disable lag smoothing on GSAP ticker for consistent feel
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
-      cancelAnimationFrame(frameId);
+      gsap.ticker.remove((time) => {
+        lenis.raf(time * 1000);
+      });
       lenis.destroy();
       delete (window as unknown as Record<string, unknown>).__lenis;
     };

@@ -1,26 +1,37 @@
 import Navigation from '@/components/Navigation';
 import { Hero } from '@/components/Hero';
+import Marquee from '@/components/Marquee';
 import Projects from '@/components/Projects';
+import Experience from '@/components/Experience';
 import About from '@/components/About';
 import Contact from '@/components/Contact';
+import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen">
-      {/* Navigation */}
-      <Navigation />
+    <SmoothScrollProvider>
+      <main className="relative min-h-screen">
+        {/* Navigation — fixed, smooth scroll links */}
+        <Navigation />
 
-      {/* Hero — Neural Network Explorer */}
-      <Hero />
+        {/* Hero — The Entrance: shrink-on-scroll name, typewriter, gradient */}
+        <Hero />
 
-      {/* Work — Neural Activity */}
-      <Projects />
+        {/* Marquee — The Flow: scroll-velocity driven expertise tags */}
+        <Marquee />
 
-      {/* About — System Specs */}
-      <About />
+        {/* Projects — The Showcase: sticky stack, parallax, tilt cards */}
+        <Projects />
 
-      {/* Contact — Uplink */}
-      <Contact />
-    </main>
+        {/* Experience — The Timeline: self-drawing line, alternating entries */}
+        <Experience />
+
+        {/* About — The Reveal: count-up stats, bio reveal, tech tags */}
+        <About />
+
+        {/* Contact — The Finale: slide-in links, underline animations */}
+        <Contact />
+      </main>
+    </SmoothScrollProvider>
   );
 }

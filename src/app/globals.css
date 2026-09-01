@@ -1,10 +1,9 @@
 /* ============================================================
-   Ahmed Badr Portfolio — Neural Network Explorer
-   Terminal UI · Dark Mode · Monospace Data · Cyan Accent
-   TailwindCSS v4 · Next.js 15 · React Three Fiber
+   Ahmed Badr Portfolio — Scroll-Driven Cinematic Experience
+   GSAP ScrollTrigger · Lenis Smooth Scroll · Dark Mode
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 /* ─── Theme Tokens ─────────────────────────────────────── */
@@ -12,6 +11,7 @@
   /* Fonts */
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Space Grotesk", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* ── Palette ─────────────────────────────────────────── */
   --color-base-950: #0A0A0A;
@@ -30,7 +30,7 @@
   --color-border-accent: rgba(6, 182, 212, 0.3);
 
   /* ═══════════════════════════════════════════════════════════
-     Keyframe Animations — subtle, purposeful
+     Keyframe Animations
      ═══════════════════════════════════════════════════════════ */
 
   @keyframes cursor-blink {
@@ -43,14 +43,30 @@
     50%      { opacity: 0.5; }
   }
 
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50%      { transform: translateY(-20px); }
+  @keyframes scroll-indicator {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50%      { transform: translateY(8px); opacity: 0.4; }
   }
 
   @keyframes glow-pulse {
     0%, 100% { opacity: 0.4; }
     50%      { opacity: 0.8; }
+  }
+
+  @keyframes gradient-shift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes marquee-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @keyframes dot-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4); }
+    50%      { transform: scale(1.2); box-shadow: 0 0 0 8px rgba(6, 182, 212, 0); }
   }
 }
 
@@ -62,7 +78,6 @@
     color-scheme: dark;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    scroll-behavior: smooth;
     text-rendering: optimizeLegibility;
   }
 
@@ -77,14 +92,15 @@
     font-size: 16px;
     letter-spacing: -0.01em;
     line-height: 1.6;
+    overflow-x: hidden;
   }
 
-  /* Monospace defaults for terminal feel */
+  /* Monospace defaults */
   code, .mono {
     font-family: var(--font-mono);
   }
 
-  /* Focus ring — cyan, thin */
+  /* Focus ring */
   :focus-visible {
     outline: 1px solid var(--color-accent);
     outline-offset: 2px;
@@ -162,6 +178,103 @@
                 0 0 80px rgba(6, 182, 212, 0.05);
   }
 
+  /* ── Hero Name Shrink ────────────────────────────────── */
+  .hero-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    will-change: font-size, transform, opacity;
+  }
+
+  /* ── Hero Gradient Background ────────────────────────── */
+  .hero-gradient {
+    background: linear-gradient(
+      135deg,
+      #0A0A0A 0%,
+      #0A1A2A 25%,
+      #0A0A1A 50%,
+      #1A0A2A 75%,
+      #0A0A0A 100%
+    );
+    background-size: 400% 400%;
+    animation: gradient-shift 15s ease infinite;
+    will-change: background-position;
+  }
+
+  /* ── Marquee Container ───────────────────────────────── */
+  .marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    will-change: transform;
+  }
+
+  .marquee-track {
+    display: inline-flex;
+    animation: marquee-scroll 30s linear infinite;
+    will-change: transform;
+  }
+
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+  /* ── Timeline Line ───────────────────────────────────── */
+  .timeline-line {
+    stroke-dasharray: var(--line-length, 1000);
+    stroke-dashoffset: var(--line-length, 1000);
+    will-change: stroke-dashoffset;
+  }
+
+  /* ── Timeline Dot ────────────────────────────────────── */
+  .timeline-dot {
+    transition: all 0.3s ease;
+  }
+
+  .timeline-dot.active {
+    animation: dot-pulse 2s ease-in-out infinite;
+  }
+
+  /* ── Project Card 3D Tilt ────────────────────────────── */
+  .project-card-3d {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    will-change: transform;
+  }
+
+  .project-card-inner {
+    transition: transform 0.15s ease-out;
+    transform-style: preserve-3d;
+  }
+
+  /* ── Underline Hover Animation ───────────────────────── */
+  .hover-underline {
+    position: relative;
+    display: inline-block;
+  }
+
+  .hover-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: var(--color-accent);
+    transition: width 0.3s ease;
+  }
+
+  .hover-underline:hover::after {
+    width: 100%;
+  }
+
+  /* ── Section Reveal Mask ─────────────────────────────── */
+  .reveal-mask {
+    clip-path: inset(0 100% 0 0);
+    will-change: clip-path;
+  }
+
   /* ── Lenis overrides ──────────────────────────────────── */
   html.lenis,
   html.lenis body {
@@ -189,6 +302,15 @@
   .leading-tight-display {
     line-height: 0.92;
   }
+
+  /* ── Will-change hints for GSAP ──────────────────────── */
+  .gsap-will-change {
+    will-change: transform, opacity;
+  }
+
+  .gsap-transform {
+    will-change: transform;
+  }
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -214,7 +336,7 @@
 }
 
 /* ═════════════════════════════════════════════════════════════
-   3D CANVAS — Ensure proper rendering
+   3D CANVAS
    ═════════════════════════════════════════════════════════════ */
 canvas {
   display: block;
@@ -223,7 +345,7 @@ canvas {
 }
 
 /* ═════════════════════════════════════════════════════════════
-   REDUCED MOTION
+   REDUCED MOTION — disable all GSAP animations
    ═════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -238,5 +360,22 @@ canvas {
   /* Disable 3D canvas animations */
   canvas {
     display: none !important;
+  }
+
+  /* Show all elements immediately */
+  .gsap-will-change,
+  .gsap-transform {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Reset clip paths */
+  .reveal-mask {
+    clip-path: none !important;
+  }
+
+  /* Stop marquee */
+  .marquee-track {
+    animation: none !important;
   }
 }

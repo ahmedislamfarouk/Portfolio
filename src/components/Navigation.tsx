@@ -1,17 +1,32 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // ── Constants ─────────────────────────────────────────────
 
-const NAV_LINKS = ['Work', 'About', 'Contact'] as const;
+const NAV_LINKS = ['Work', 'Experience', 'About', 'Contact'] as const;
 const SCROLL_THRESHOLD = 40;
 
-// ── Smooth scroll helper ──────────────────────────────────
+// ── Smooth scroll helper using Lenis ──────────────────────
 
 function scrollToSection(id: string) {
   const el = document.getElementById(id);
-  if (el) {
+  if (!el) return;
+
+  // Try Lenis first, fallback to native
+  const lenis = (window as unknown as Record<string, unknown>).__lenis as
+    | { scrollTo: (target: string | HTMLElement, options?: { offset?: number; duration?: number }) => void }
+    | undefined;
+
+  if (lenis) {
+    lenis.scrollTo(el, { offset: -80, duration: 1.5 });
+  } else {
     const offset = 80;
     const y = el.getBoundingClientRect().top + window.scrollY - offset;
     window.scrollTo({ top: y, behavior: 'smooth' });
@@ -23,12 +38,38 @@ function scrollToSection(id: string) {
 const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD);
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Track active section via ScrollTrigger
+  useEffect(() => {
+    const sections = ['home', 'projects', 'experience', 'about', 'contact'];
+    const triggers: ScrollTrigger[] = [];
+
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const st = ScrollTrigger.create({
+        trigger: el,
+        start: 'top 50%',
+        end: 'bottom 50%',
+        onEnter: () => setActiveSection(id),
+        onEnterBack: () => setActiveSection(id),
+      });
+      triggers.push(st);
+    });
+
+    return () => {
+      triggers.forEach((st) => st.kill());
+    };
   }, []);
 
   // Body lock when mobile menu open
@@ -55,17 +96,27 @@ const Navigation = () => {
 
   const handleNavClick = useCallback((label: string) => {
     setMobileOpen(false);
-    const sectionId = label === 'Home' ? 'home' : label.toLowerCase();
+    const sectionId =
+      label === 'Work' ? 'projects' : label === 'Home' ? 'home' : label.toLowerCase();
     scrollToSection(sectionId);
   }, []);
 
   const handleLogoClick = useCallback(() => {
     setMobileOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const lenis = (window as unknown as Record<string, unknown>).__lenis as
+      | { scrollTo: (target: string | HTMLElement, options?: { offset?: number; duration?: number }) => void }
+      | undefined;
+
+    if (lenis) {
+      lenis.scrollTo(0 as unknown as string, { duration: 1.5 });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   return (
     <header
+      ref={navRef}
       className={`fixed top-0 left-0 right-0 z-[400] transition-all duration-500 ${
         scrolled
           ? 'bg-base-950/90 backdrop-blur-md border-b border-border'
@@ -98,19 +149,34 @@ const Navigation = () => {
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavClick(item);
-                }}
-                className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-secondary hover:text-text-primary transition-colors duration-200 cursor-pointer"
-              >
-                {item}
-              </a>
-            ))}
+            {NAV_LINKS.map((item) => {
+              const sectionId =
+                item === 'Work'
+                  ? 'projects'
+                  : item.toLowerCase();
+              const isActive = activeSection === sectionId;
+
+              return (
+                <a
+                  key={item}
+                  href={`#${sectionId}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(item);
+                  }}
+                  className={`font-mono text-[11px] uppercase tracking-[0.2em] transition-colors duration-200 cursor-pointer relative ${
+                    isActive
+                      ? 'text-accent'
+                      : 'text-text-secondary hover:text-text-primary'
+                  }`}
+                >
+                  {item}
+                  {isActive && (
+                    <span className="absolute -bottom-1 left-0 right-0 h-px bg-accent" />
+                  )}
+                </a>
+              );
+            })}
           </div>
 
           {/* Desktop CTA */}
@@ -165,7 +231,7 @@ const Navigation = () => {
             {NAV_LINKS.map((item) => (
               <a
                 key={item}
-                href={`#${item.toLowerCase()}`}
+                href={`#${item === 'Work' ? 'projects' : item.toLowerCase()}`}
                 onClick={(e) => {
                   e.preventDefault();
                   handleNavClick(item);
@@ -192,7 +258,7 @@ const Navigation = () => {
             <a
               href="mailto:ahmed@nomeda.ai"
               onClick={() => setMobileOpen(false)}
-              className="font-mono text-[10px] uppercase tracking-[0.15em] px-5 py-2.5 bg-white text-base-950 font-medium transition-all duration-300 cursor-pointer"
+              className="font-mono text-[10px] uppercase tracking-[0.15em] px-5 py-2.5 bg-white text-base-950 font-medium transition-all duration-300"
               aria-label="Get in touch"
             >
               CONTACT

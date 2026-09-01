@@ -1,7 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { projects } from '@/data/projects';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // ── All projects displayed ────────────────────────────────
 
@@ -60,17 +66,22 @@ function TiltCard({
   return (
     <div
       ref={cardRef}
-      className={className}
+      className={`project-card-3d ${className}`}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={{
-        transform: `perspective(1000px) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) scale(${isHovered ? 1.02 : 1})`,
-        transition: 'transform 0.15s ease-out',
-        transformStyle: 'preserve-3d',
+        perspective: '1000px',
       }}
     >
-      {children}
+      <div
+        className="project-card-inner"
+        style={{
+          transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) scale(${isHovered ? 1.02 : 1})`,
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 }
@@ -87,38 +98,19 @@ const ProjectCard = ({
   onClick: () => void;
 }) => {
   const [loaded, setLoaded] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
   const statusStyle = STATUS_STYLES[project.status] || {
     label: project.status,
     color: '#06B6D4',
   };
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (cardRef.current) observer.observe(cardRef.current);
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <div ref={cardRef}>
-      <TiltCard
-        className={`group grid-card cursor-pointer transition-all duration-700 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}
-      >
-        <article onClick={onClick} style={{ animationDelay: `${index * 80}ms` }}>
-          {/* Image container */}
-          <div className="relative aspect-[16/10] overflow-hidden bg-base-900">
+    <div ref={cardRef} className="project-card-wrapper">
+      <TiltCard className="grid-card cursor-pointer">
+        <article onClick={onClick}>
+          {/* Image container with parallax */}
+          <div ref={imageRef} className="relative aspect-[16/10] overflow-hidden bg-base-900">
             {!loaded && (
               <div
                 className="absolute inset-0 bg-cover bg-center"
@@ -130,9 +122,12 @@ const ProjectCard = ({
               alt={project.title}
               loading="lazy"
               onLoad={() => setLoaded(true)}
-              className={`w-full h-full object-cover transition-all duration-700 ${
+              className={`w-full h-full object-cover transition-all duration-700 gsap-will-change ${
                 loaded ? 'opacity-60' : 'opacity-0'
-              } group-hover:opacity-80 group-hover:scale-105`}
+              }`}
+              style={{
+                transform: 'scale(1.2)',
+              }}
             />
 
             {/* Top-left: project number */}
@@ -158,7 +153,7 @@ const ProjectCard = ({
 
             {/* Scan line overlay on hover */}
             <div
-              className="absolute inset-0 pointer-events-none z-[5] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              className="absolute inset-0 pointer-events-none z-[5] opacity-0 hover:opacity-100 transition-opacity duration-500"
               style={{
                 background:
                   'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(6,182,212,0.015) 2px, rgba(6,182,212,0.015) 4px)',
@@ -166,7 +161,7 @@ const ProjectCard = ({
             />
 
             {/* Bottom glow on hover */}
-            <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-base-950/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-base-950/80 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
           </div>
 
           {/* Info */}
@@ -225,6 +220,9 @@ function ProjectModal({
   index: number;
   onClose: () => void;
 }) {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const statusStyle = STATUS_STYLES[project.status] || {
     label: project.status,
     color: '#06B6D4',
@@ -236,14 +234,57 @@ function ProjectModal({
     };
     document.addEventListener('keydown', handleEsc);
     document.body.style.overflow = 'hidden';
+
+    // Animate modal in
+    if (backdropRef.current && contentRef.current) {
+      gsap.fromTo(
+        backdropRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.3, ease: 'power2.out' },
+      );
+      gsap.fromTo(
+        contentRef.current,
+        { opacity: 0, scale: 0.9, y: 20 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.4,
+          ease: 'power3.out',
+          delay: 0.1,
+        },
+      );
+    }
+
     return () => {
       document.removeEventListener('keydown', handleEsc);
       document.body.style.overflow = '';
     };
   }, [onClose]);
 
+  const handleClose = useCallback(() => {
+    if (backdropRef.current && contentRef.current) {
+      gsap.to(contentRef.current, {
+        opacity: 0,
+        scale: 0.95,
+        y: 10,
+        duration: 0.2,
+        ease: 'power2.in',
+      });
+      gsap.to(backdropRef.current, {
+        opacity: 0,
+        duration: 0.3,
+        delay: 0.05,
+        onComplete: onClose,
+      });
+    } else {
+      onClose();
+    }
+  }, [onClose]);
+
   return (
     <div
+      ref={modalRef}
       className="fixed inset-0 z-[500] flex items-center justify-center p-4 md:p-8"
       role="dialog"
       aria-modal="true"
@@ -251,16 +292,20 @@ function ProjectModal({
     >
       {/* Backdrop */}
       <div
+        ref={backdropRef}
         className="absolute inset-0 bg-base-950/90 backdrop-blur-xl"
-        onClick={onClose}
+        onClick={handleClose}
         aria-hidden="true"
       />
 
       {/* Content */}
-      <div className="relative bg-base-900 border border-border max-w-3xl w-full max-h-[85vh] overflow-y-auto">
+      <div
+        ref={contentRef}
+        className="relative bg-base-900 border border-border max-w-3xl w-full max-h-[85vh] overflow-y-auto opacity-0"
+      >
         {/* Close button */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center border border-border hover:border-accent transition-colors duration-200 cursor-pointer"
           aria-label="Close project details"
         >
@@ -306,7 +351,9 @@ function ProjectModal({
           <div className="space-y-3 mb-8">
             {project.details.map((detail, i) => (
               <div key={i} className="flex gap-3">
-                <span className="text-accent text-xs mt-1.5 shrink-0">&#x25B8;</span>
+                <span className="text-accent text-xs mt-1.5 shrink-0">
+                  &#x25B8;
+                </span>
                 <span className="text-text-secondary text-sm leading-relaxed">
                   {detail}
                 </span>
@@ -350,7 +397,9 @@ function ProjectModal({
                 className="group inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.15em] text-text-secondary hover:text-accent transition-colors duration-300"
               >
                 <span>VIEW SOURCE</span>
-                <span className="group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
+                <span className="group-hover:translate-x-1 transition-transform duration-300">
+                  &rarr;
+                </span>
               </a>
             )}
           </div>
@@ -363,22 +412,126 @@ function ProjectModal({
 // ── Projects Section ──────────────────────────────────────
 
 const Projects = () => {
-  const [hasMounted, setHasMounted] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
-  const mountRef = useRef(false);
+  const hasSetup = useRef(false);
 
-  useEffect(() => {
-    if (mountRef.current) return;
-    mountRef.current = true;
-    requestAnimationFrame(() => setHasMounted(true));
+  const setupAnimations = useCallback(() => {
+    if (hasSetup.current) return;
+    hasSetup.current = true;
+
+    const prefersReduced = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+    if (prefersReduced) return;
+
+    // ── Section header: clip-path reveal ──
+    if (headerRef.current) {
+      gsap.fromTo(
+        headerRef.current,
+        { clipPath: 'inset(0 100% 0 0)' },
+        {
+          clipPath: 'inset(0 0% 0 0)',
+          duration: 1,
+          ease: 'power3.inOut',
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: 'top 85%',
+            end: 'top 50%',
+            scrub: 1,
+          },
+        },
+      );
+    }
+
+    // ── Project cards: slide in from alternating sides with rotation ──
+    const cards = gsap.utils.toArray<HTMLElement>('.project-card-wrapper');
+    cards.forEach((card, i) => {
+      const isFromLeft = i % 2 === 0;
+      const imageEl = card.querySelector('img');
+
+      // Card: slide in from side + rotation + scale
+      gsap.fromTo(
+        card,
+        {
+          opacity: 0,
+          x: isFromLeft ? -100 : 100,
+          rotation: isFromLeft ? -3 : 3,
+          scale: 0.8,
+        },
+        {
+          opacity: 1,
+          x: 0,
+          rotation: 0,
+          scale: 1,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 85%',
+            end: 'top 40%',
+            scrub: 1,
+          },
+        },
+      );
+
+      // Image: parallax (moves slower than card)
+      if (imageEl) {
+        gsap.to(imageEl, {
+          y: -30,
+          scale: 1.1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1,
+          },
+        });
+      }
+    });
+
+    // ── Counter badge ──
+    const counterEl = sectionRef.current?.querySelector('[data-counter]');
+    if (counterEl) {
+      gsap.fromTo(
+        counterEl,
+        { opacity: 0, x: 20 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: counterEl,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        },
+      );
+    }
   }, []);
 
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      setupAnimations();
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      ScrollTrigger.getAll().forEach((st) => st.kill());
+    };
+  }, [setupAnimations]);
+
   return (
-    <section id="projects" className="border-b border-border">
+    <section id="projects" ref={sectionRef} className="border-b border-border">
       <div className="max-w-[1400px] mx-auto w-full px-6 md:px-12 lg:px-20 py-16 md:py-24">
         {/* Header */}
         <div
-          className={`mb-10 flex items-end justify-between gap-6 transition-opacity duration-700 ${hasMounted ? 'opacity-100' : 'opacity-0'}`}
+          ref={headerRef}
+          className="mb-10 flex items-end justify-between gap-6"
+          style={{ clipPath: 'inset(0 100% 0 0)' }}
         >
           <div>
             <span className="data-label">NEURAL ACTIVITY</span>
@@ -386,7 +539,10 @@ const Projects = () => {
               SELECTED WORK
             </h2>
           </div>
-          <span className="font-mono text-[11px] text-text-tertiary hidden sm:block">
+          <span
+            data-counter
+            className="font-mono text-[11px] text-text-tertiary hidden sm:block opacity-0"
+          >
             [{ALL_PROJECTS.length} ACTIVE]
           </span>
         </div>
@@ -394,8 +550,8 @@ const Projects = () => {
         {/* Horizontal rule */}
         <div className="w-full h-px bg-border mb-10" />
 
-        {/* Project grid with tilt cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {/* Project cards — stacked layout */}
+        <div ref={cardsContainerRef} className="space-y-16 md:space-y-24">
           {ALL_PROJECTS.map((project, i) => (
             <ProjectCard
               key={project.title}
