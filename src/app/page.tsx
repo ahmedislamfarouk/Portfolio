@@ -10,10 +10,10 @@ export default function Home() {
       {/* Navigation */}
       <Navigation />
 
-      {/* Hero — System Online */}
+      {/* Hero — Neural Network Explorer */}
       <Hero />
 
-      {/* Work — Mission Log */}
+      {/* Work — Neural Activity */}
       <Projects />
 
       {/* About — System Specs */}

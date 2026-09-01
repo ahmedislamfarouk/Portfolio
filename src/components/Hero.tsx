@@ -1,8 +1,21 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 
-// ── useTypewriter ──────────────────────────────────────
+// ── Lazy-load the NeuralNetwork ───────────────────────────
+
+const NeuralNetwork = dynamic(
+  () => import('@/components/three/NeuralNetwork'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="fixed inset-0 -z-10 bg-base-950" aria-hidden="true" />
+    ),
+  },
+);
+
+// ── Typewriter hook ───────────────────────────────────────
 
 function useTypewriter(words: string[], speed = 80, pause = 2000) {
   const [displayed, setDisplayed] = useState('');
@@ -34,7 +47,7 @@ function useTypewriter(words: string[], speed = 80, pause = 2000) {
   return displayed;
 }
 
-// ── HERO SECTION ───────────────────────────────────────
+// ── Hero Section ──────────────────────────────────────────
 
 const HERO_ROLES = [
   'AI Researcher',
@@ -51,16 +64,31 @@ const Hero = () => {
   useEffect(() => {
     if (mountRef.current) return;
     mountRef.current = true;
-    requestAnimationFrame(() => {
-      setHasMounted(true);
-    });
+    requestAnimationFrame(() => setHasMounted(true));
   }, []);
 
   return (
     <section
       id="home"
-      className="relative flex items-center min-h-dvh border-b border-border"
+      className="relative flex items-center min-h-dvh overflow-hidden"
     >
+      {/* 3D Neural Network Background */}
+      <NeuralNetwork
+        onNodeClick={(node) => {
+          console.log('Clicked:', node.label);
+        }}
+        onNodeHover={(node) => {
+          if (node) {
+            document.body.style.cursor = 'pointer';
+          } else {
+            document.body.style.cursor = 'default';
+          }
+        }}
+      />
+
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-base-950/70 via-base-950/40 to-base-950/80 pointer-events-none z-[1]" />
+
       {/* Content */}
       <div className="max-w-[1400px] mx-auto w-full px-6 md:px-12 lg:px-20 relative z-10 py-24 md:py-32">
         {/* Top bar: status + coordinates */}
@@ -109,7 +137,8 @@ const Hero = () => {
           className={`mb-12 md:mb-16 transition-all duration-700 delay-300 ${hasMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
         >
           <p className="text-text-secondary text-base md:text-lg max-w-lg">
-            Building autonomous systems that see.
+            Building autonomous systems that see. Explore the neural network
+            above — each node represents a skill or domain.
           </p>
         </div>
 
@@ -127,18 +156,25 @@ const Hero = () => {
             <span className="inline-flex items-center justify-center w-8 h-8 border border-border group-hover:border-accent group-hover:bg-accent/5 transition-all duration-300">
               <span className="text-xs">&rarr;</span>
             </span>
-            <span className="uppercase tracking-[0.15em] text-[11px]">VIEW WORK</span>
+            <span className="uppercase tracking-[0.15em] text-[11px]">
+              VIEW WORK
+            </span>
           </a>
           <span className="font-mono text-[11px] text-text-tertiary">
             Last updated: 2026
           </span>
         </div>
       </div>
+
+      {/* Scroll indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+        <div className="w-5 h-8 border border-border rounded-full flex justify-center pt-1.5">
+          <div className="w-1 h-1.5 bg-accent rounded-full animate-pulse" />
+        </div>
+      </div>
     </section>
   );
 };
-
-// ── Export as named + default ───────────────────────────
 
 export { Hero };
 export default Hero;

@@ -1,7 +1,7 @@
 /* ============================================================
-   Ahmed Badr Portfolio — Mission Control Dashboard
+   Ahmed Badr Portfolio — Neural Network Explorer
    Terminal UI · Dark Mode · Monospace Data · Cyan Accent
-   TailwindCSS v4 · Next.js 15
+   TailwindCSS v4 · Next.js 15 · React Three Fiber
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -41,6 +41,16 @@
   @keyframes status-pulse {
     0%, 100% { opacity: 1; }
     50%      { opacity: 0.5; }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%      { transform: translateY(-20px); }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 0.8; }
   }
 }
 
@@ -126,7 +136,7 @@
   /* ── Grid Card (border only, no shadow) ──────────────── */
   .grid-card {
     @apply border border-border bg-base-950 overflow-hidden;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, transform 0.3s ease;
   }
   .grid-card:hover {
     border-color: var(--color-border-accent);
@@ -138,6 +148,18 @@
   }
   .link-arrow:hover {
     transform: translateX(4px);
+  }
+
+  /* ── Dot Grid (for background) ───────────────────────── */
+  .dot-grid {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* ── Neural Glow Effect ──────────────────────────────── */
+  .neural-glow {
+    box-shadow: 0 0 40px rgba(6, 182, 212, 0.1),
+                0 0 80px rgba(6, 182, 212, 0.05);
   }
 
   /* ── Lenis overrides ──────────────────────────────────── */
@@ -192,6 +214,15 @@
 }
 
 /* ═════════════════════════════════════════════════════════════
+   3D CANVAS — Ensure proper rendering
+   ═════════════════════════════════════════════════════════════ */
+canvas {
+  display: block;
+  outline: none;
+  touch-action: none;
+}
+
+/* ═════════════════════════════════════════════════════════════
    REDUCED MOTION
    ═════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
@@ -202,5 +233,10 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Disable 3D canvas animations */
+  canvas {
+    display: none !important;
   }
 }

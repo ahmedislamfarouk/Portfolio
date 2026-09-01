@@ -2,33 +2,23 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-// ── Constants ───────────────────────────────────────────
+// ── Constants ─────────────────────────────────────────────
+
 const NAV_LINKS = ['Work', 'About', 'Contact'] as const;
 const SCROLL_THRESHOLD = 40;
 
-// ── Smooth scroll helper ────────────────────────────────
-function smoothScrollTo(targetY: number) {
-  const lenis = (window as unknown as Record<string, unknown>).__lenis as
-    | { scrollTo: (target: number | string | Element, options?: { offset?: number; duration?: number }) => void }
-    | undefined;
-
-  if (lenis && typeof lenis.scrollTo === 'function') {
-    lenis.scrollTo(targetY, { duration: 1.6 });
-    return;
-  }
-  window.scrollTo({ top: targetY, behavior: 'smooth' });
-}
+// ── Smooth scroll helper ──────────────────────────────────
 
 function scrollToSection(id: string) {
   const el = document.getElementById(id);
   if (el) {
     const offset = 80;
     const y = el.getBoundingClientRect().top + window.scrollY - offset;
-    smoothScrollTo(y);
+    window.scrollTo({ top: y, behavior: 'smooth' });
   }
 }
 
-// ── Navigation ──────────────────────────────────────────
+// ── Navigation ────────────────────────────────────────────
 
 const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -48,7 +38,9 @@ const Navigation = () => {
     } else {
       document.body.style.overflow = '';
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [mobileOpen]);
 
   // Escape to close
@@ -69,7 +61,7 @@ const Navigation = () => {
 
   const handleLogoClick = useCallback(() => {
     setMobileOpen(false);
-    smoothScrollTo(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   return (
@@ -106,22 +98,19 @@ const Navigation = () => {
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((item) => {
-              const href = `#${item.toLowerCase()}`;
-              return (
-                <a
-                  key={item}
-                  href={href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick(item);
-                  }}
-                  className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-secondary hover:text-text-primary transition-colors duration-200 cursor-pointer"
-                >
-                  {item}
-                </a>
-              );
-            })}
+            {NAV_LINKS.map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(item);
+                }}
+                className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-secondary hover:text-text-primary transition-colors duration-200 cursor-pointer"
+              >
+                {item}
+              </a>
+            ))}
           </div>
 
           {/* Desktop CTA */}
@@ -173,23 +162,20 @@ const Navigation = () => {
           aria-label="Navigation menu"
         >
           <div className="flex flex-col items-center gap-6">
-            {NAV_LINKS.map((item) => {
-              const href = `#${item.toLowerCase()}`;
-              return (
-                <a
-                  key={item}
-                  href={href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick(item);
-                  }}
-                  className="font-sans font-bold text-4xl uppercase tracking-tight text-text-primary hover:text-accent transition-colors duration-300 cursor-pointer"
-                  aria-label={`Navigate to ${item}`}
-                >
-                  {item}
-                </a>
-              );
-            })}
+            {NAV_LINKS.map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(item);
+                }}
+                className="font-sans font-bold text-4xl uppercase tracking-tight text-text-primary hover:text-accent transition-colors duration-300 cursor-pointer"
+                aria-label={`Navigate to ${item}`}
+              >
+                {item}
+              </a>
+            ))}
           </div>
 
           {/* Mobile CTA */}
