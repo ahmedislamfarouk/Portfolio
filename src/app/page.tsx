@@ -1,6 +1,7 @@
 import Navigation from '@/components/Navigation';
 import { Hero } from '@/components/Hero';
 import Marquee from '@/components/Marquee';
+import MinecraftSection from '@/components/MinecraftSection';
 import Projects from '@/components/Projects';
 import Experience from '@/components/Experience';
 import About from '@/components/About';
@@ -19,6 +20,9 @@ export default function Home() {
 
         {/* Marquee — The Flow: scroll-velocity driven expertise tags */}
         <Marquee />
+
+        {/* Minecraft World — Skyblock-style 3D scroll experience */}
+        <MinecraftSection />
 
         {/* Projects — The Showcase: sticky stack, parallax, tilt cards */}
         <Projects />
